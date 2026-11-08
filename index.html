@@ -100,6 +100,10 @@ textarea.fillin{min-height:110px;font-size:15px;line-height:1.6;resize:vertical}
 .feedback.ok{background:var(--green-bg);color:var(--ink)}
 .feedback.no{background:var(--red-bg);color:var(--ink)}
 .feedback b.t{color:var(--green)} .feedback.no b.t{color:var(--red)}
+.kp-reveal{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.kp-reveal-head{font-size:13px;font-weight:900;color:var(--amber);letter-spacing:.05em;margin-bottom:10px}
+.kp-reveal .kp{margin-bottom:0}
+.exam-q .kp-reveal{border-top-color:var(--line)}
 .qnav{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
 .btn{border:none;border-radius:999px;padding:11px 20px;font-weight:900;font-size:14px;background:var(--dark);color:var(--bg)}
 .btn.amber{background:var(--amber);color:#191c1f}
@@ -138,6 +142,19 @@ ul.tight{margin:6px 0 0;padding-left:20px}
 .track-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.track-grid{grid-template-columns:1fr}}
 .track{border:1.5px solid var(--line);border-radius:12px;padding:14px}.track.fast{border-color:var(--amber)} .track.slow{border-color:var(--blue)}
 .prio{font-size:11px;font-weight:900;padding:2px 7px;border-radius:999px}.prio-high{background:var(--red-bg);color:var(--red)} .prio-mid{background:var(--amber-bg);color:var(--amber)} .prio-set{background:var(--blue-bg);color:var(--blue)}
+.cycle-steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+@media(max-width:560px){.cycle-steps{grid-template-columns:1fr}}
+.cycle-step{border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--surface)}
+.cycle-step b{font-size:15px}
+.cycle-step p{font-size:13px;color:var(--muted);margin:4px 0 0}
+.cycle-step.on{border-color:var(--amber);background:var(--amber-bg)}
+.cycle-step.done{border-color:var(--green);background:var(--green-bg)}
+.cycle-bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:10px 0}
+.cycle-bar i{display:block;height:100%;background:var(--amber);transition:width .3s}
+.cycle-score{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;margin:14px 0}
+@media(max-width:560px){.cycle-score{grid-template-columns:1fr}}
+.cycle-score div{background:var(--surface2);border-radius:12px;padding:12px}
+.cycle-score b{font-size:24px;display:block;font-family:"Noto Serif SC",serif}
 </style>
 </head>
 <body>
@@ -170,7 +187,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div class="ladder" style="margin-top:14px"><span class="hot">间隔1 · 学后约10分钟</span><span class="hot">间隔2 · 当天2–4小时后</span><span>间隔3 · 隔夜10–16小时（Day2）</span><span>间隔4 · 考前早上唤醒</span></div>
     <p style="font-size:13px;color:var(--muted);margin:4px 0 0">新间隔逻辑：已换成两天专用阶梯，不再用原来拉到一周的长间隔。Day 1 学完约 10 分钟就自检，当天睡前再过一遍（间隔 2–4 小时），睡一觉后 Day 2 延迟提取（间隔 10–16 小时），最后考前早上只扫错题和数字锚点。睡眠不是浪费时间，是让 Day 1 编码固化的一步。</p>
     <ul class="task-list" id="sprintTasks"></ul>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn amber" onclick="go('sprint')">打开两天任务板 →</button><button class="btn ghost" onclick="go('curve')">Day 1 过卡</button><button class="btn ghost" onclick="go('turbo')">Day 2 提取</button><span class="stat">模拟轮次 <b id="mockCountTop">0 / 3</b></span><span class="stat">覆盖 <b id="coverTop">0 / 65</b></span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn amber" onclick="go('sprint')">打开两天任务板 →</button><button class="btn ghost" onclick="go('curve')">Day 1 过卡</button><button class="btn ghost" onclick="go('turbo')">Day 2 提取</button><button class="btn ghost" onclick="go('cycle')">以题带学 →</button><span class="stat">模拟轮次 <b id="mockCountTop">0 / 3</b></span><span class="stat">覆盖 <b id="coverTop">0 / 65</b></span></div>
   </div>
 
   <nav class="nav" id="mainNav">
@@ -178,6 +195,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <button data-view="sprint">⏱ 两天冲刺</button>
     <button data-view="curve">① 记忆曲线 · 熟悉</button>
     <button data-view="turbo">② 科研速通 · 认题</button>
+    <button data-view="cycle">③ 以题带学 · 测→学→练</button>
     <button data-view="know">知识点 · 65</button>
     <button data-view="practice">练手题（辅助）</button>
     <button data-view="wrong">错题本</button>
@@ -213,6 +231,13 @@ ul.tight{margin:6px 0 0;padding-left:20px}
         <p style="margin-top:10px"><button class="btn blue" onclick="go('turbo')">开始速通 →</button></p>
       </div>
     </div>
+
+    <div class="card" style="margin-top:14px;border:2px solid var(--amber)">
+        <div class="modnum">新板块 ③ · 做题带动记忆</div>
+        <h3>以题带学 · 全量练 → 只学薄弱点 → 只练薄弱点 · 循环清零</h3>
+        <p>先把<b>所有知识点对应的客观题一次练完</b>，系统按知识点算出你真正的薄弱点（答对的不再浪费时间）；然后只针对薄弱点学——每条按「先认关键词 → 看考试锚点和你错在哪 → 认干扰项」三步快速识别，不默写、不抄书；学完只复练薄弱点的题，<b>还有错就自动回到学习那一步再循环</b>，直到薄弱点清零为止。</p>
+        <p style="margin-top:10px"><button class="btn amber" onclick="go('cycle')">开始全量摸底 →</button> <span class="stat">已清零轮次 <b id="cycleRoundsHome">0</b></span> <span class="stat">当前薄弱点 <b id="cycleWeakHome">—</b></span></p>
+      </div>
 
     <div class="kicker">五大模块（新版编号）</div>
     <div class="grid2" id="modCards"></div>
@@ -280,6 +305,27 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     </div>
   </section>
 
+  <!-- 板块3 以题带学 -->
+  <section class="view" id="view-cycle">
+    <div class="card" style="margin-bottom:14px">
+      <h3>以题带学 · 练—学—练，循环到薄弱点清零</h3>
+      <p style="font-size:14px;color:var(--muted)">适合两天速成、选择题为主的打法，不平均用力：<b style="color:var(--ink)">① 全量摸底</b>把每个知识点对应的客观题（判断/单选/多选/填空，解答题不计入判定）都练一遍，只报对错、不看解析，按知识点算薄弱点；<b style="color:var(--ink)">② 只学薄弱点</b>，每条用识别学法三步：先凭关键词猜 → 翻开看考试锚点＋「你刚才错在哪」→ 认清干扰项长什么样，清单题整组认、易混题成对辨；<b style="color:var(--ink)">③ 只练薄弱点</b>，优先换同知识点的新题、没有新题时用关键词/数字/集合认领题换个问法再测，并带解析。<b style="color:var(--ink)">复练还有错 → 自动回到 ② 只学剩下的薄弱点 → 再练，直到清零。</b>进度自动存本机，中途关掉再打开能接着走；摸底可以分几次做完，不用一口气。</p>
+      <div class="cycle-steps" id="cycleSteps">
+        <div class="cycle-step" data-cs="diag"><b>① 全量练 · 测薄弱点</b><p>所有知识点对应的客观题逐题练完，不会就猜，只看对错不看解析。</p></div>
+        <div class="cycle-step" data-cs="learn"><b>② 只学薄弱点 · 识别学法</b><p>关键词先猜 → 锚点＋错因 → 认干扰项。数字/清单整组认，易混成对辨。</p></div>
+        <div class="cycle-step" data-cs="retest"><b>③ 只练薄弱点 · 换题复练</b><p>新题优先、换问法兜底，带解析。还有错就 ↺ 回到 ②，直到薄弱点 = 0。</p></div>
+      </div>
+      <div class="toolbar" style="margin-bottom:0">
+        <span class="stat">摸底正确 <b id="cycleDiagScore">—</b></span>
+        <span class="stat">当前薄弱点 <b id="cycleWeak">—</b></span>
+        <span class="stat">清扫循环 <b id="cycleLoopStat">第 0 轮</b></span>
+        <span class="stat">已清零 <b id="cycleRounds">0</b> 次</span>
+        <button class="btn ghost" id="cycleResetBtn" type="button">放弃进度 · 重新摸底</button>
+      </div>
+    </div>
+    <div id="cycleBox"></div>
+  </section>
+
   <!-- 知识点 -->
   <section class="view" id="view-know">
     <div class="toolbar">
@@ -292,7 +338,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
 
   <!-- 练手题 -->
   <section class="view" id="view-practice">
-    <div class="card" style="margin-bottom:14px"><h3>练手题 · 只为辅助记忆</h3><p>考试怎么出题未知，这里的题<b>不押题</b>，只帮你把 65 条过一遍手感：覆盖到、能回忆起关键词即可，不用追求刷完、更不用追求满分。判断 / 单选 / 多选 / 填空 / 解答五种形式都在，解答题看参考答案自评就行。</p></div>
+    <div class="card" style="margin-bottom:14px"><h3>练手题 · 只为辅助记忆</h3><p>考试怎么出题未知，这里的题<b>不押题</b>，只帮你把 65 条过一遍手感：覆盖到、能回忆起关键词即可，不用追求刷完、更不用追求满分。判断 / 单选 / 多选 / 填空 / 解答五种形式都在，解答题看参考答案自评就行。<b>每道题答完后，不管对错，下方都会展开对应的原知识点</b>，方便你对照原文、助记和示意图再认一遍。</p></div>
     <div class="toolbar" id="typeChips"></div>
     <div class="toolbar" id="modChips"></div>
     <div id="practiceBox"></div>
@@ -535,6 +581,7 @@ var STORAGE_KEY="traffic-safety-learning-v1";
 var _restoredTb=null;
 var mockRounds=0;
 var state={done:{},wrong:{},essayDone:{}};
+var cycleState={phase:"idle",diagIds:[],diagAns:{},diagIdx:0,origWeak:[],weakKps:[],learnQueue:[],learnIdx:0,learnFlipped:false,learnRequeued:{},retestItems:[],retestAns:{},retestIdx:0,loop:0,clears:0,diagCorrect:0,usedRetestQ:[],usedSyn:[]};
 var fam={}; /* 知识点熟悉度 0未见 1眼熟 2秒认 */
 KP.forEach(function(k){fam[k[0]]=0;});
 /* 优先级：数字/清单/成对易混 = 高优先快线；逻辑对比 = 慢线；其余覆盖优先 */
@@ -546,7 +593,7 @@ function saveProgress(){
   try{
     var td=(typeof tbDone==="number")?tbDone:(_restoredTb?_restoredTb.done:0);
     var to=(typeof tbOk==="number")?tbOk:(_restoredTb?_restoredTb.ok:0);
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({fam:fam,done:state.done,wrong:state.wrong,essayDone:state.essayDone,tbDone:td,tbOk:to,mockRounds:mockRounds,savedAt:Date.now()}));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({fam:fam,done:state.done,wrong:state.wrong,essayDone:state.essayDone,tbDone:td,tbOk:to,mockRounds:mockRounds,cycle:cycleState,savedAt:Date.now()}));
     var el=document.getElementById("saveHint");
     if(el)el.textContent="已保存到本机";
   }catch(e){}
@@ -562,6 +609,7 @@ function loadProgress(){
     if(data.wrong)state.wrong=data.wrong;
     if(data.essayDone)state.essayDone=data.essayDone;
     if(typeof data.mockRounds==="number")mockRounds=data.mockRounds;
+    if(data.cycle&&typeof data.cycle==="object"&&data.cycle.phase){var dc=data.cycle;["diagIds","diagAns","origWeak","weakKps","learnQueue","retestItems","retestAns","usedRetestQ","usedSyn"].forEach(function(k){if(dc[k]!==undefined)cycleState[k]=dc[k];});["diagIdx","learnIdx","retestIdx","loop","clears","diagCorrect"].forEach(function(k){if(typeof dc[k]==="number")cycleState[k]=dc[k];});cycleState.phase=dc.phase;cycleState.learnFlipped=!!dc.learnFlipped;if(dc.learnRequeued)cycleState.learnRequeued=dc.learnRequeued;}
     if(typeof data.tbDone==="number"||typeof data.tbOk==="number")_restoredTb={done:data.tbDone||0,ok:data.tbOk||0};
     var el=document.getElementById("saveHint");
     if(el)el.textContent="已恢复上次进度 · 已保存到本机";
@@ -581,6 +629,7 @@ function refreshStats(){
   var ct=document.getElementById("coverTop");if(ct)ct.textContent=seen+" / 65";
   var mc=mockRounds+" / 3";["mockCountTop","mockCount2","mockCount3"].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=mc;});
   var mh=document.getElementById("mockHint");if(mh)mh.textContent=mockRounds>=3?" · 已达标，继续只清错题":" · 还差 "+(3-mockRounds)+" 轮";
+  if(typeof updateCycleHeader==="function")updateCycleHeader();
   renderSprintTasks();
 }
 function renderSprintTasks(){
@@ -594,6 +643,7 @@ function renderSprintTasks(){
     {t:"Day 2 · 打乱提取 + 不限时认领 + 易混对子交错",done:false},
     {t:"Day 2 · 至少 3 轮完整模拟（已完成 "+mockRounds+" / 3）",done:mockRounds>=3},
     {t:"错题清零 · 当前错题本 "+wrongN+" 道，答对自动移出",done:wrongN===0&&Object.keys(state.done).length>0},
+    {t:"以题带学清零 · "+(cycleState.phase==="cleared"?"薄弱点已清零 ✓":cycleState.phase==="idle"?"还没开始全量摸底，去板块③开始":cycleState.phase==="diag"?"全量摸底中 "+Object.keys(cycleState.diagAns).length+" / "+cycleState.diagIds.length:"薄弱点还剩 "+cycleState.weakKps.length+" 个 · 第 "+cycleState.loop+" 轮清扫"),done:cycleState.phase==="cleared"},
     {t:"考前早上 · 只扫数字锚点+错题本，前一晚23:00前睡",done:false}
   ];
   el.innerHTML=tasks.map(function(x){return '<li class="'+(x.done?"done":"")+'"><i>'+(x.done?"✓":"·")+'</i><span>'+x.t+'</span></li>';}).join("");
@@ -656,6 +706,10 @@ function kpCard(k){
   if(pending)h+='<div class="kp-body">这一条暂无内容：'+(k[0]===64?"计算题，按你的安排留空，不编公式，等你发 p272 页面再补。":"清单里只有页码 p230、没有标题，等你发那一页再补。")+'</div>';
   if(k[5])h+='<div class="mn-box"><span class="mn-tag">助记 · </span><span class="mn-text">'+esc(k[5])+'</span>'+diagram(k[6])+'</div>';
   return h+"</div>";
+}
+function kpRevealHTML(n){
+  var k=kpByNo(n);if(!k)return "";
+  return '<div class="kp-reveal"><div class="kp-reveal-head">原知识点 · 第 '+n+' 条 · '+esc(k[2])+'（答对答错都对照原文再认一遍）</div>'+kpCard(k)+'</div>';
 }
 function renderKp(){
   var kw=document.getElementById("kpSearch").value.trim();
@@ -817,7 +871,7 @@ function renderPractice(){
     h+='<input class="fillin" id="fillIn" type="text" placeholder="把各空的答案依次写出来，用空格或顿号隔开" autocomplete="off">';
     if(q.hint)h+='<p style="font-size:13px;color:var(--muted)">提示：'+esc(q.hint)+'</p>';
   }else if(q.t==="essay"){h+='<textarea class="fillin" id="essayIn" placeholder="先在心里说一遍要点，再点「查看参考答案」对照自评（不用默写全文）"></textarea>';}
-  h+='<div class="feedback" id="fb"></div><div class="qnav">';
+  h+='<div class="feedback" id="fb"></div><div id="kpReveal"></div><div class="qnav">';
   if(q.t==="multi"||q.t==="fill")h+='<button class="btn amber" id="submitBtn">提交答案</button>';
   if(q.t==="essay")h+='<button class="btn amber" id="revealBtn">查看参考答案</button>';
   h+='<button class="btn ghost" id="prevBtn" '+(pIdx===0?"disabled":"")+'>← 上一题</button><button class="btn ghost" id="nextBtn" '+(pIdx>=pList.length-1?"disabled":"")+'>下一题 →</button><button class="btn ghost" id="randBtn">随机一题</button></div></div>';
@@ -840,6 +894,7 @@ function renderPractice(){
   if(rb)rb.addEventListener("click",function(){
     var fb=document.getElementById("fb");fb.className="feedback show ok";
     fb.innerHTML="<b>参考答案</b><br>"+esc(q.ref).replace(/\n/g,"<br>")+"<br><br><span style='color:var(--muted)'>"+esc(q.e)+"</span><div class='qnav'><span style='font-weight:700'>自评：</span><button class='btn amber' id='selfOk'>要点都说到了</button><button class='btn ghost' id='selfNo'>没答全，进错题本</button></div>";
+    var kr2=document.getElementById("kpReveal");if(kr2)kr2.innerHTML=kpRevealHTML(q.kp);
     rb.disabled=true;
     document.getElementById("selfOk").addEventListener("click",function(){record(q,true);renderPractice();});
     document.getElementById("selfNo").addEventListener("click",function(){record(q,false);renderPractice();});
@@ -860,6 +915,7 @@ function answerPractice(q,correct,chosen){
   var fb=document.getElementById("fb");fb.className="feedback show "+(correct?"ok":"no");
   var ansTxt=q.t==="judge"?("正确答案："+(q.a?"正确 √":"错误 ×")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
   fb.innerHTML="<b class='t'>"+(correct?"✓ 答对了":"✗ 答错了 · 已进错题本和重学环")+"</b>　"+ansTxt+"<br>"+(correct?esc(q.e):("为什么错（因果提醒）："+esc(q.e)+" 记住干扰项错在哪一句，该知识点约5题后和下一块开头会再考你一次。"));
+  var kr=document.getElementById("kpReveal");if(kr)kr.innerHTML=kpRevealHTML(q.kp);
   var sb=document.getElementById("submitBtn");if(sb)sb.disabled=true;
 }
 renderTypeChips();buildPracticeList();renderPractice();
@@ -881,7 +937,7 @@ function renderExam(){
     else if(q.t==="single")s+='<div class="opts">'+q.o.map(function(o,i){return '<label class="opt"><input type="radio" name="ex'+qi+'" value="'+i+'"> <span><b>'+"ABCD"[i]+'.</b> '+esc(o)+'</span></label>';}).join("")+"</div>";
     else if(q.t==="multi")s+='<div class="opts">'+q.o.map(function(o,i){return '<label class="opt"><input type="checkbox" name="ex'+qi+'" value="'+i+'"> <span><b>'+"ABCD"[i]+'.</b> '+esc(o)+'</span></label>';}).join("")+"</div>";
     else if(q.t==="fill")s+='<input class="fillin" id="exfill'+qi+'" type="text" placeholder="填写答案（多个空用空格隔开）" autocomplete="off">';
-    return s+'<div class="feedback" id="exfb'+qi+'"></div></div>';
+    return s+'<div class="feedback" id="exfb'+qi+'"></div><div id="exkp'+qi+'"></div></div>';
   }).join("");
   h+='<div class="qnav"><button class="btn amber" id="examSubmit">交卷看分</button><button class="btn ghost" onclick="examQs=null;renderExam()">收起</button></div><div id="examResult"></div>';
   box.innerHTML=h;
@@ -899,11 +955,247 @@ function gradeExam(){
     var fb=document.getElementById("exfb"+qi);fb.className="feedback show "+(ok?"ok":"no");
     var ansTxt=q.t==="judge"?("正确判断："+(q.a?"正确":"错误")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
     fb.innerHTML="<b class='t'>"+(ok?"✓ +5 分":"✗ 0 分")+"</b>　"+ansTxt+"<br>"+esc(q.e);
+    var exkp=document.getElementById("exkp"+qi);if(exkp)exkp.innerHTML=kpRevealHTML(q.kp);
   });
   var msg=score>=90?"识别速度已经很快了（本轮计入模拟 "+mockRounds+" / 3），考前再过一轮卡就行。":score>=70?"不错（模拟 "+mockRounds+" / 3），错的几道已进错题本，把对应知识点按因果提醒重学一遍即可。":score>=60?"刚过线（模拟 "+mockRounds+" / 3）：先去板块①把错题对应的卡过到秒认，再做下一轮。":"别急着刷卷（模拟 "+mockRounds+" / 3）：回板块①按模块过卡，再到板块②练成对辨认和集合认领，混淆点清掉再测。";
   document.getElementById("examResult").innerHTML='<div class="card" style="margin-top:16px;text-align:center"><div class="result-big">'+score+' <span style="font-size:20px">/ 100</span></div><p>'+msg+'</p><p style="margin-top:10px"><button class="btn amber" onclick="startExam()">再来一套</button> <button class="btn ghost" onclick="go(\'wrong\')">看错题本</button></p></div>';
 }
 renderExam();
+
+/* ============ 板块③ 以题带学 · 练—学—练循环清零 ============ */
+var cycleSel=[];
+function cycleDiagPool(){return Q.filter(function(q){return q.t!=="essay";}).slice().sort(function(a,b){return a.m-b.m||a.kp-b.kp||a.id-b.id;});}
+function cycleQById(id){for(var i=0;i<Q.length;i++)if(Q[i].id===id)return Q[i];return null;}
+function updateCycleHeader(){
+  var total=cycleState.diagIds.length,ansN=Object.keys(cycleState.diagAns).length;
+  var ds=document.getElementById("cycleDiagScore");if(ds)ds.textContent=total?cycleState.diagCorrect+" / "+total+" 题（已做 "+ansN+"）":"—";
+  var wk=(cycleState.phase==="idle"||cycleState.phase==="diag")?null:cycleState.weakKps.length;
+  var wtxt=wk===null?"—":(wk===0?"0 · 已清零":wk+" 个");
+  var cw=document.getElementById("cycleWeak");if(cw)cw.textContent=wtxt;
+  var wh=document.getElementById("cycleWeakHome");if(wh)wh.textContent=wtxt;
+  var ls=document.getElementById("cycleLoopStat");if(ls)ls.textContent="第 "+cycleState.loop+" 轮";
+  var cr=document.getElementById("cycleRounds");if(cr)cr.textContent=cycleState.clears;
+  var crh=document.getElementById("cycleRoundsHome");if(crh)crh.textContent=cycleState.clears;
+  document.querySelectorAll("#cycleSteps .cycle-step").forEach(function(el){
+    var k=el.dataset.cs;el.classList.remove("on","done");
+    if(cycleState.phase==="diag"&&k==="diag")el.classList.add("on");
+    if(cycleState.phase==="learn"&&k==="learn")el.classList.add("on");
+    if(cycleState.phase==="retest"&&k==="retest")el.classList.add("on");
+    if(cycleState.phase==="cleared"){el.classList.add("done");}
+    if(cycleState.phase==="learn"&&k==="diag")el.classList.add("done");
+    if(cycleState.phase==="retest"&&(k==="diag"||k==="learn"))el.classList.add("done");
+  });
+}
+function startCycle(){
+  var pool=cycleDiagPool();
+  cycleState={phase:"diag",diagIds:pool.map(function(q){return q.id;}),diagAns:{},diagIdx:0,origWeak:[],weakKps:[],learnQueue:[],learnIdx:0,learnFlipped:false,learnRequeued:{},retestItems:[],retestAns:{},retestIdx:0,loop:0,clears:cycleState.clears||0,diagCorrect:0,usedRetestQ:[],usedSyn:[]};
+  saveProgress();renderCycle();
+}
+function cycleWeakFromAns(ansMap,items){
+  var seen={},out=[];
+  items.forEach(function(it){
+    var q=it.q||it;var key=it.key;
+    if(ansMap[key]===false&&!seen[q.kp]){seen[q.kp]=1;out.push(q.kp);}
+  });
+  return out;
+}
+function cycleQuestionHTML(q,answered,showExplain,phaseLabel){
+  var h='<div class="qcard"><div class="qmeta"><span class="tag amber">'+TYPES[q.t]+'</span><span class="tag">'+MODULES[q.m!==undefined?q.m:(kpByNo(q.kp)?kpByNo(q.kp)[1]:0)]+'</span><span class="tag">知识点 '+q.kp+' · '+esc(kpByNo(q.kp)?kpByNo(q.kp)[2]:"")+'</span><span class="tag blue">'+phaseLabel+'</span></div>';
+  h+='<div class="qtext">'+esc(q.q)+'</div>';
+  if(q.t==="judge"){h+='<div class="opts"><button class="opt" data-cv="1" '+(answered?"disabled":"")+'><span class="key">√</span>正确</button><button class="opt" data-cv="0" '+(answered?"disabled":"")+'><span class="key">×</span>错误</button></div>';}
+  else if(q.t==="single"||q.t==="multi"){h+='<div class="opts">'+q.o.map(function(o,i){return '<button class="opt" data-cv="'+i+'" '+(answered?"disabled":"")+'><span class="key">'+"ABCD"[i]+'</span><span>'+esc(o)+'</span></button>';}).join("")+"</div>";if(q.t==="multi")h+='<p style="font-size:13px;color:var(--muted)">多选题：可多选，选好后点「提交」。</p>';}
+  else if(q.t==="fill"){h+='<input class="fillin" id="cycleFill" type="text" placeholder="把各空答案依次写出来，用空格隔开" autocomplete="off" '+(answered?"disabled":"")+'>';if(q.hint)h+='<p style="font-size:13px;color:var(--muted)">提示：'+esc(q.hint)+'</p>';}
+  if(!answered&&(q.t==="multi"||q.t==="fill"))h+='<div class="qnav"><button class="btn amber" id="cycleSubmit">提交答案</button></div>';
+  h+='<div class="feedback" id="cycleFb"></div><div id="cycleKpReveal"></div><div class="qnav" id="cycleNextWrap"></div></div>';
+  return h;
+}
+function cycleWireQuestion(q,onDone){
+  cycleSel=[];
+  var box=document.getElementById("cycleBox");
+  box.querySelectorAll(".opt").forEach(function(b){
+    b.addEventListener("click",function(){
+      var v=+b.dataset.cv;
+      if(q.t==="multi"){var ix=cycleSel.indexOf(v);if(ix>=0){cycleSel.splice(ix,1);b.classList.remove("sel");}else{cycleSel.push(v);b.classList.add("sel");}return;}
+      if(q.t==="judge")onDone((v===1)===q.a);
+      else onDone(v===q.a);
+    });
+  });
+  var sb=document.getElementById("cycleSubmit");
+  if(sb)sb.addEventListener("click",function(){
+    if(q.t==="multi"){if(!cycleSel.length)return;onDone(cycleSel.slice().sort().join(",")===q.a.slice().sort().join(","));}
+    else{var el=document.getElementById("cycleFill");var val=el?el.value.trim().toLowerCase().replace(/\s+/g,""):"";if(!val)return;onDone(q.a.every(function(k){return val.indexOf(String(k).toLowerCase())>=0;}));}
+  });
+}
+function cycleShowFeedback(correct,explain,nextLabel,onNext){
+  var fb=document.getElementById("cycleFb");if(!fb)return;
+  fb.className="feedback show "+(correct?"ok":"no");
+  fb.innerHTML="<b class='t'>"+(correct?"✓ 答对了":"✗ 答错了")+"</b>"+(explain?"　"+esc(explain):"");
+  var w=document.getElementById("cycleNextWrap");if(w)w.innerHTML='<button class="btn amber" id="cycleNextBtn">'+nextLabel+'</button>';
+  var nb=document.getElementById("cycleNextBtn");if(nb)nb.addEventListener("click",onNext);
+  var box=document.getElementById("cycleBox");box.querySelectorAll(".opt").forEach(function(b){b.disabled=true;});
+  var sb=document.getElementById("cycleSubmit");if(sb)sb.disabled=true;
+  var fi=document.getElementById("cycleFill");if(fi)fi.disabled=true;
+}
+function cycleProgress(done,total,label){
+  var pct=total?Math.round(done/total*100):0;
+  return '<p style="font-size:13px;color:var(--muted);margin:0 0 6px">'+label+' · '+done+' / '+total+'</p><div class="cycle-bar"><i style="width:'+pct+'%"></i></div>';
+}
+/* ---- 阶段1：全量摸底 ---- */
+function renderCycleDiag(){
+  var box=document.getElementById("cycleBox");
+  var total=cycleState.diagIds.length,idx=cycleState.diagIdx;
+  if(idx>=total){finishDiag();return;}
+  var q=cycleQById(cycleState.diagIds[idx]);if(!q){cycleState.diagIdx++;renderCycleDiag();return;}
+  var answered=cycleState.diagAns[q.id]!==undefined;
+  box.innerHTML=cycleProgress(idx,total,"① 全量摸底 · 按模块顺序练完所有知识点对应的客观题，只看对错、不看解析；可以中途离开，下次接着做")+cycleQuestionHTML(q,answered,false,"摸底中 · 不看解析");
+  if(answered){
+    cycleShowFeedback(cycleState.diagAns[q.id],"这条已记下，解析留到学薄弱点时再看。",idx>=total-1?"做完了 · 看我的薄弱点 →":"下一题 →",function(){cycleState.diagIdx++;saveProgress();renderCycle();});
+  }else{
+    cycleWireQuestion(q,function(correct){
+      cycleState.diagAns[q.id]=correct;if(correct)cycleState.diagCorrect++;
+      record(q,correct);saveProgress();updateCycleHeader();renderCycleDiag();
+    });
+  }
+}
+function finishDiag(){
+  var items=cycleState.diagIds.map(function(id){return {q:cycleQById(id),key:id};});
+  var weak=cycleWeakFromAns(cycleState.diagAns,items);
+  cycleState.origWeak=weak.slice();cycleState.weakKps=weak.slice();cycleState.diagCorrect=Object.keys(cycleState.diagAns).filter(function(k){return cycleState.diagAns[k];}).length;
+  if(!weak.length){cycleState.phase="cleared";cycleState.clears++;cycleState.loop=0;}
+  else{cycleState.phase="diagDone";}
+  saveProgress();renderCycle();
+}
+function startLearnCycle(){
+  cycleState.phase="learn";cycleState.loop=(cycleState.loop||0)+1;cycleState.learnQueue=cycleState.weakKps.slice();cycleState.learnIdx=0;cycleState.learnFlipped=false;cycleState.learnRequeued={};
+  saveProgress();renderCycle();
+}
+/* ---- 阶段2：只学薄弱点（识别学法） ---- */
+function cycleWrongQsForKp(kpNo){
+  return cycleState.diagIds.map(function(id){return cycleQById(id);}).filter(function(q){return q&&q.kp===kpNo&&cycleState.diagAns[q.id]===false;});
+}
+function cycleAnchorList(k){
+  var src=(k[3]||k[4]||"").replace(/^【[^】]*】/,"").trim();
+  var parts=src.split(/[；。\n]/).map(function(s){return s.trim();}).filter(function(s){return s.length>1;});
+  if(parts.length<2)parts=src.split(/[、，]/).map(function(s){return s.trim();}).filter(function(s){return s;});
+  return parts.slice(0,8);
+}
+function renderCycleLearn(){
+  var box=document.getElementById("cycleBox");
+  var queue=cycleState.learnQueue,idx=cycleState.learnIdx;
+  if(idx>=queue.length){buildRetest();return;}
+  var kpNo=queue[idx],k=kpByNo(kpNo);if(!k){cycleState.learnIdx++;renderCycleLearn();return;}
+  var wrongQs=cycleWrongQsForKp(kpNo);
+  /* 复练轮的错题也算错因来源 */
+  var head='<p style="font-size:13px;color:var(--muted);margin:0 0 6px">② 薄弱点速学 · 第 '+cycleState.loop+' 轮清扫 · 还剩 '+cycleState.weakKps.length+' 个薄弱点</p><div class="cycle-bar"><i style="width:'+Math.round(idx/queue.length*100)+'%"></i></div>';
+  var wrongHtml="";
+  if(wrongQs.length){wrongHtml='<div class="card" style="border-color:var(--red);margin-bottom:12px"><h3 style="font-size:15px">你刚才错在哪 · 第 '+kpNo+' 条</h3>'+wrongQs.map(function(q){return '<p style="font-size:14px;margin:8px 0 0"><b>'+esc(q.q)+'</b><br><span style="color:var(--muted)">'+esc(q.e)+'</span></p>';}).join("")+'</div>';}
+  if(!cycleState.learnFlipped){
+    box.innerHTML=head+wrongHtml+'<div class="qcard flash" id="cycleFlash"><div class="qmeta" style="justify-content:center"><span class="tag red">薄弱点 · 第 '+kpNo+' 条</span><span class="tag">'+MODULES[k[1]]+'</span><span class="tag blue">第 1 步 · 先凭关键词猜</span></div><div class="big">'+esc(k[2])+'</div><p style="color:var(--muted);margin:10px 0 0">关键词提示：<span class="kw">'+esc(kwOf(k))+'…</span></p><p style="color:var(--muted);font-size:13px;margin:6px 0 0">先在心里说出：这条有几个要点？数字/成员分别是什么？清单题先报个数，再报成员。</p><p style="color:var(--muted);font-size:13px;margin-top:12px">想好了？点卡片翻开看锚点 ↓</p></div>';
+    document.getElementById("cycleFlash").addEventListener("click",function(){cycleState.learnFlipped=true;saveProgress();renderCycleLearn();});
+    return;
+  }
+  var anchors=cycleAnchorList(k);
+  var anchorHtml=anchors.length?'<div class="card" style="margin:12px 0"><h3 style="font-size:15px">第 2 步 · 考试锚点（只认这些就能选对）</h3><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+anchors.map(function(a){return '<span class="tag" style="font-size:13px;padding:5px 10px">'+esc(a)+'</span>';}).join("")+'</div><p style="font-size:13px;color:var(--muted);margin:8px 0 0">'+(PRIO_SET[kpNo]?'这是清单题：先记总数（'+anchors.length+' 项左右，以原文为准），再整组认领——少一个、混进一个外人都不选。':PRIO_SLOW[kpNo]?'这是易混题：别只背这一条，重点记它和对子的方向区别（下一步复练会成对/换问法考你）。':'数字和限定词是锚点：看到选项先对数字、再对范围词（≥ / &lt; / 以上 / 以下）。')+'</p></div>':"";
+  box.innerHTML=head+wrongHtml+'<div class="qmeta"><span class="tag blue">第 2 步 · 看锚点</span><span class="tag blue">第 3 步 · 对照原文认干扰项</span></div>'+kpCard(k)+anchorHtml+'<div class="card"><h3 style="font-size:15px">认得怎么样？（按真实反应点，忘了会自动排到本轮后面再学一次）</h3><div class="rateRow"><button class="r-no" id="cyRateNo">忘了<small>本轮后面重学</small></button><button class="r-mid" id="cyRateMid">眼熟<small>先过 · 靠复练检验</small></button><button class="r-yes" id="cyRateYes">秒认<small>直接去复练验证</small></button></div></div>';
+  document.getElementById("cyRateNo").addEventListener("click",function(){fam[kpNo]=0;if(!cycleState.learnRequeued[kpNo]){cycleState.learnRequeued[kpNo]=1;cycleState.learnQueue.push(kpNo);}cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
+  document.getElementById("cyRateMid").addEventListener("click",function(){if(fam[kpNo]<1)fam[kpNo]=1;cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
+  document.getElementById("cyRateYes").addEventListener("click",function(){fam[kpNo]=2;cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
+}
+/* ---- 阶段3：只练薄弱点（换题复练） ---- */
+function cycleSynForKp(kpNo){
+  var out=[];
+  KWQ.filter(function(x){return x.kp===kpNo;}).forEach(function(x){
+    var opts=x.opts.map(function(n){return kpByNo(n)[2];});var correct=x.opts.indexOf(kpNo);
+    out.push({syn:true,t:"single",q:"关键词认领："+x.kw+" —— 这是哪一条知识点？",o:opts,a:correct,e:"关键词「"+x.kw+"」对应第 "+kpNo+" 条「"+kpByNo(kpNo)[2]+"」。换问法复练：不看题干套路，只认关键词组合。",kp:kpNo,m:kpByNo(kpNo)[1]});
+  });
+  NUMQ.filter(function(x){return x.kp===kpNo;}).forEach(function(x){out.push({syn:true,t:"single",q:x.q,o:x.o,a:x.a,e:"数字锚点对应第 "+kpNo+" 条「"+kpByNo(kpNo)[2]+"」。",kp:kpNo,m:kpByNo(kpNo)[1]});});
+  SETQ.filter(function(x){return x.kp===kpNo;}).forEach(function(x){
+    var pair=shuffle([{t:x.good,r:true},{t:x.bad,r:false}]);var a=pair[0].r?0:1;
+    out.push({syn:true,t:"single",q:"集合认领："+x.prompt,o:pair.map(function(p){return p.t;}),a:a,e:x.why,kp:kpNo,m:kpByNo(kpNo)[1]});
+  });
+  return out;
+}
+function buildRetest(){
+  var items=[],usedQ={};cycleState.diagIds.forEach(function(id){usedQ[id]=1;});(cycleState.usedRetestQ||[]).forEach(function(id){usedQ[id]=1;});
+  cycleState.weakKps.forEach(function(kpNo){
+    var cands=Q.filter(function(q){return q.kp===kpNo&&q.t!=="essay"&&!usedQ[q.id];});
+    if(cands.length){var pick=cands[Math.floor(Math.random()*cands.length)];cycleState.usedRetestQ.push(pick.id);items.push({qid:pick.id});return;}
+    var syns=cycleSynForKp(kpNo).filter(function(s){return (cycleState.usedSyn||[]).indexOf(s.q)<0;});
+    if(!syns.length)syns=cycleSynForKp(kpNo);
+    if(syns.length){var sp=syns[Math.floor(Math.random()*syns.length)];cycleState.usedSyn.push(sp.q);items.push({syn:sp});return;}
+    var wrongIds=cycleState.diagIds.filter(function(id){var q=cycleQById(id);return q&&q.kp===kpNo&&cycleState.diagAns[id]===false;});
+    if(wrongIds.length)items.push({qid:wrongIds[0],reuse:true});
+  });
+  cycleState.retestItems=shuffle(items);cycleState.retestAns={};cycleState.retestIdx=0;cycleState.phase="retest";
+  if(!cycleState.retestItems.length){cycleState.phase="cleared";cycleState.clears++;cycleState.weakKps=[];}
+  saveProgress();renderCycle();
+}
+function cycleRetestQ(item){return item.syn?item.syn:cycleQById(item.qid);}
+function renderCycleRetest(){
+  var box=document.getElementById("cycleBox");
+  var total=cycleState.retestItems.length,idx=cycleState.retestIdx;
+  if(idx>=total){finishRetest();return;}
+  var item=cycleState.retestItems[idx],q=cycleRetestQ(item);if(!q){cycleState.retestIdx++;renderCycleRetest();return;}
+  var answered=cycleState.retestAns[idx]!==undefined;
+  var label=item.syn?"换问法复练":(item.reuse?"原错题重练":"同知识点新题");
+  box.innerHTML=cycleProgress(idx,total,"③ 只练薄弱点 · "+label+" · 答错的知识点学完会再循环，不清零不结束")+cycleQuestionHTML(q,answered,true,label);
+  if(answered){
+    cycleShowFeedback(cycleState.retestAns[idx],q.e,idx>=total-1?"看复练结果 →":"下一题 →",function(){cycleState.retestIdx++;saveProgress();renderCycle();});
+    var ckr=document.getElementById("cycleKpReveal");if(ckr)ckr.innerHTML=kpRevealHTML(q.kp);
+  }else{
+    cycleWireQuestion(q,function(correct){
+      cycleState.retestAns[idx]=correct;
+      if(!item.syn&&cycleQById(item.qid))record(cycleQById(item.qid),correct);
+      if(correct&&fam[q.kp]<2)fam[q.kp]=2;if(!correct)fam[q.kp]=0;
+      refreshStats();saveProgress();renderCycleRetest();
+    });
+  }
+}
+function finishRetest(){
+  var items=cycleState.retestItems.map(function(it,ix){return {q:cycleRetestQ(it),key:ix};});
+  var still=cycleWeakFromAns(cycleState.retestAns,items);
+  if(!still.length){
+    cycleState.weakKps=[];cycleState.phase="cleared";cycleState.clears++;
+  }else{
+    cycleState.weakKps=still;cycleState.phase="retestDone";
+  }
+  saveProgress();renderCycle();
+}
+/* ---- 总渲染 ---- */
+function renderCycle(){
+  updateCycleHeader();
+  var box=document.getElementById("cycleBox");if(!box)return;
+  if(cycleState.phase==="idle"){
+    var pool0=cycleDiagPool(),n=pool0.length,covered={};pool0.forEach(function(q){covered[q.kp]=1;});
+    var uncovered=KP.filter(function(k){return !covered[k[0]]&&(k[3]||k[4]);}).map(function(k){return k[0];});
+    box.innerHTML='<div class="empty">还没有开始。<br>第一步会把 <b>'+n+' 道客观题</b>（判断/单选/多选/填空，覆盖 '+Object.keys(covered).length+' 个有题的知识点）按模块顺序逐题练完——不用一口气，可以随时关掉，下次打开接着做。<br>练完自动算出薄弱点，后面只学、只练薄弱点，循环到清零。<br><span style="font-size:12px">说明：第 '+uncovered.join("、")+' 条目前题库里还没有对应题，不计入薄弱判定，用板块①过卡补上，别漏。</span><br><br><button class="btn amber" onclick="startCycle()">开始全量摸底（'+n+' 题）→</button> <button class="btn ghost" onclick="go(\'curve\')">先去过无题知识点</button></div>';return;
+  }
+  if(cycleState.phase==="diag"){renderCycleDiag();return;}
+  if(cycleState.phase==="diagDone"){
+    var tot=cycleState.diagIds.length,strongN=tot-Object.keys(cycleState.diagAns).filter(function(k){return !cycleState.diagAns[k];}).length;
+    box.innerHTML='<div class="card"><h3>摸底完成 · 你的薄弱点出来了</h3><div class="cycle-score"><div>全量客观题<b>'+cycleState.diagCorrect+' / '+tot+'</b><span style="font-size:13px;color:var(--muted)">答对题数</span></div><div>薄弱知识点<b>'+cycleState.weakKps.length+' 个</b><span style="font-size:13px;color:var(--muted)">有错题的知识点</span></div><div>已掌握<b>'+strongN+' 题</b><span style="font-size:13px;color:var(--muted)">答对的不再重复学</span></div></div><p style="font-size:14px"><b>薄弱点清单：</b></p><div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+cycleState.weakKps.map(function(n){var k=kpByNo(n);return '<span class="tag red" style="font-size:13px;padding:5px 10px">第 '+n+' 条 · '+esc(k?k[2]:"")+'</span>';}).join("")+'</div><p style="font-size:13px;color:var(--muted)">接下来只学这 '+cycleState.weakKps.length+' 条：每条先凭关键词猜，再看锚点和你错在哪，最后认干扰项——为选择题识别而学，不默写。学完立刻只练这几条，错了再循环。</p><p style="margin-top:10px"><button class="btn amber" onclick="startLearnCycle()">开始学薄弱点（'+cycleState.weakKps.length+' 条）→</button></p></div>';return;
+  }
+  if(cycleState.phase==="retestDone"){
+    box.innerHTML='<div class="card"><h3>复练还没清零 · 还剩 '+cycleState.weakKps.length+' 个薄弱点</h3><div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">'+cycleState.weakKps.map(function(n){var k=kpByNo(n);return '<span class="tag red" style="font-size:13px;padding:5px 10px">第 '+n+' 条 · '+esc(k?k[2]:"")+'</span>';}).join("")+'</div><p style="font-size:14px;color:var(--muted)">不重学已答对的，只把剩下的再走一遍「学 → 练」，这是第 '+(cycleState.loop+1)+' 轮清扫。累了可以先关掉，进度存着，下次接着这一轮。</p><p style="margin-top:10px"><button class="btn amber" onclick="startLearnCycle()">再学剩下的 '+cycleState.weakKps.length+' 条 →</button> <button class="btn ghost" onclick="go(\'wrong\')">先看错题本</button></p></div>';return;
+  }
+  if(cycleState.phase==="learn"){renderCycleLearn();return;}
+  if(cycleState.phase==="retest"){renderCycleRetest();return;}
+  if(cycleState.phase==="cleared"){
+    var total=cycleState.diagIds.length;
+    box.innerHTML='<div class="card" style="text-align:center"><div class="result-big">薄弱点清零 ✓</div><div class="cycle-score"><div>摸底<b>'+cycleState.diagCorrect+' / '+total+'</b><span style="font-size:13px;color:var(--muted)">全量客观题答对</span></div><div>最初薄弱点<b>'+cycleState.origWeak.length+' 个</b><span style="font-size:13px;color:var(--muted)">'+cycleState.origWeak.map(function(n){return "第"+n+"条";}).join(" · ")||"无"+'</span></div><div>清扫循环<b>'+cycleState.loop+' 轮</b><span style="font-size:13px;color:var(--muted)">学—练反复到全对</span></div></div><p style="color:var(--muted);font-size:14px">这一轮的薄弱点已经全部复练答对。隔几个小时后再来一轮全量摸底，能防回落；也可以去速通做交错辨认。</p><p style="margin-top:10px"><button class="btn amber" onclick="startCycle()">再来一轮全量摸底 →</button> <button class="btn ghost" onclick="go(\'turbo\')">去速通交错辨认</button> <button class="btn ghost" onclick="go(\'wrong\')">看错题本</button></p></div>';return;
+  }
+  /* 阶段切换的过渡页（learn/retest 之间由 render 函数内部处理，这里兜底） */
+  box.innerHTML='<div class="empty">正在整理薄弱点…<br><br><button class="btn amber" onclick="renderCycle()">继续 →</button></div>';
+}
+(function(){
+  var rb=document.getElementById("cycleResetBtn");
+  if(rb)rb.addEventListener("click",function(){
+    if(cycleState.phase==="idle")return;
+    if(rb.dataset.armed){cycleState={phase:"idle",diagIds:[],diagAns:{},diagIdx:0,origWeak:[],weakKps:[],learnQueue:[],learnIdx:0,learnFlipped:false,learnRequeued:{},retestItems:[],retestAns:{},retestIdx:0,loop:0,clears:cycleState.clears||0,diagCorrect:0,usedRetestQ:[],usedSyn:[]};delete rb.dataset.armed;rb.textContent="放弃进度 · 重新摸底";saveProgress();renderCycle();}
+    else{rb.dataset.armed="1";rb.textContent="再点一次确认放弃本轮进度";setTimeout(function(){delete rb.dataset.armed;rb.textContent="放弃进度 · 重新摸底";},3500);}
+  });
+})();
+renderCycle();
 
 /* ============ 错题本 ============ */
 function renderWrong(){
@@ -938,6 +1230,7 @@ refreshStats();
     try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
     KP.forEach(function(k){fam[k[0]]=0;});
     state.done={};state.wrong={};state.essayDone={};mockRounds=0;
+    cycleState={phase:"idle",diagIds:[],diagAns:{},diagIdx:0,origWeak:[],weakKps:[],learnQueue:[],learnIdx:0,learnFlipped:false,learnRequeued:{},retestItems:[],retestAns:{},retestIdx:0,loop:0,clears:0,diagCorrect:0,usedRetestQ:[],usedSyn:[]};if(typeof renderCycle==="function")renderCycle();
     if(typeof tbDone==="number"){tbDone=0;tbOk=0;tbStat();}
     _restoredTb=null;
     refreshStats();renderKp();resetCurve();renderWrong();

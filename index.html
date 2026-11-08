@@ -80,6 +80,7 @@ button{font-family:inherit;cursor:pointer}
 .mn-box .mn-tag{font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.05em}
 .mn-box .mn-text{display:inline}
 .mn-box svg{display:block;max-width:320px;width:100%;height:auto;margin:6px 0 2px;opacity:.85}
+.mn-box svg.fig{max-width:600px;opacity:1;margin-top:10px}
 .qcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
 .qmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .qtext{font-size:18px;font-weight:700;line-height:1.55}
@@ -123,6 +124,18 @@ ul.tight{margin:6px 0 0;padding-left:20px}
 @media(max-width:560px){.duo{grid-template-columns:1fr}}
 .duo .cell{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
 .duo .cell b{font-size:15px}
+.sprint-board{border:2px solid var(--amber);background:var(--surface);border-radius:16px;padding:18px;margin:18px 0}
+.sprint-board h2{font-size:20px}
+.count-num{font-family:"Noto Serif SC",serif;font-size:32px;font-weight:900;color:var(--amber);line-height:1}
+.phase-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:900}
+.phase-pill.d1{background:var(--amber-bg);color:var(--amber)} .phase-pill.d2{background:var(--blue-bg);color:var(--blue)} .phase-pill.exam{background:var(--green-bg);color:var(--green)}
+.task-list{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.task-list li{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border-radius:10px;padding:10px 12px;font-size:14px}
+.task-list li i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--surface);border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:900}
+.task-list li.done{opacity:.75} .task-list li.done i{background:var(--green);color:#fff;border-color:var(--green)}
+.track-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.track-grid{grid-template-columns:1fr}}
+.track{border:1.5px solid var(--line);border-radius:12px;padding:14px}.track.fast{border-color:var(--amber)} .track.slow{border-color:var(--blue)}
+.prio{font-size:11px;font-weight:900;padding:2px 7px;border-radius:999px}.prio-high{background:var(--red-bg);color:var(--red)} .prio-mid{background:var(--amber-bg);color:var(--amber)} .prio-set{background:var(--blue-bg);color:var(--blue)}
 </style>
 </head>
 <body>
@@ -142,12 +155,25 @@ ul.tight{margin:6px 0 0;padding-left:20px}
 
   <div class="hero">
     <h1>65 个知识点，只练一件事：<br>看到关键词，认出正确答案。</h1>
-    <p>内容以你新发的清单（2.docx）为准，已更新全部 65 条：新增了死亡人数约 6万–10万、事件树与事故树、博得理论的「安全管理」、醉驾 ≥80、视距四分类、标志位置设置细则等。两个记忆板块都按<b>识别记忆</b>设计——短间隔、高频、快速过卡、干扰项辨认，不要求长篇默写。题目只作练手参考，重心永远在知识点本身。</p>
+    <p>内容以你新发的清单（2.docx）为准，已更新全部 65 条：新增了死亡人数约 6万–10万、事件树与事故树、博得理论的「安全管理」、醉驾 ≥80、视距四分类、标志位置设置细则等。两个记忆板块都按<b>识别记忆</b>设计——短间隔、高频、快速过卡、干扰项辨认，不要求长篇默写。题目只作练手参考，重心永远在知识点本身。第 18、19 条已按课本原文补入（p49 图2-10 轨迹交叉论、p52 图2-11 瑟利模型）并配简化示意图；第 56、57 条按 p229、第 60 条按 p240 课本原文补入（处罚改为五种、应急预案 3 种与预警红橙黄蓝）。</p>
     <div class="roadline"></div>
+  </div>
+
+  <!-- 两天冲刺总控台 -->
+  <div class="sprint-board" id="sprintBoard">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <div><span class="phase-pill d1" id="phasePill">两天冲刺 · Day 1 编码 → Day 2 提取</span><h2 style="margin-top:8px">两天冲刺 · 以 100 分为优化目标</h2><p style="color:var(--muted);font-size:13px;margin:6px 0 0;max-width:44em">目标是把覆盖、辨认速度和错题清零做到极致，<b style="color:var(--ink)">不保证 100 分</b>——结果取决于是否完整跑完两天计划、错题是否清掉、以及考前睡眠。节奏就两天：第一天全覆盖编码，第二天只做提取和清错，考试当天早上只做唤醒，不学新内容。</p></div>
+      <div style="text-align:right;min-width:150px"><div style="font-size:12px;color:var(--muted)">预计剩余用时</div><div class="count-num" id="sprintEta" style="font-size:20px;margin-top:4px">--</div></div>
+    </div>
+    <div class="ladder" style="margin-top:14px"><span class="hot">间隔1 · 学后约10分钟</span><span class="hot">间隔2 · 当天2–4小时后</span><span>间隔3 · 隔夜10–16小时（Day2）</span><span>间隔4 · 考前早上唤醒</span></div>
+    <p style="font-size:13px;color:var(--muted);margin:4px 0 0">新间隔逻辑：已换成两天专用阶梯，不再用原来拉到一周的长间隔。Day 1 学完约 10 分钟就自检，当天睡前再过一遍（间隔 2–4 小时），睡一觉后 Day 2 延迟提取（间隔 10–16 小时），最后考前早上只扫错题和数字锚点。睡眠不是浪费时间，是让 Day 1 编码固化的一步。</p>
+    <ul class="task-list" id="sprintTasks"></ul>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn amber" onclick="go('sprint')">打开两天任务板 →</button><button class="btn ghost" onclick="go('curve')">Day 1 过卡</button><button class="btn ghost" onclick="go('turbo')">Day 2 提取</button><span class="stat">模拟轮次 <b id="mockCountTop">0 / 3</b></span><span class="stat">覆盖 <b id="coverTop">0 / 65</b></span></div>
   </div>
 
   <nav class="nav" id="mainNav">
     <button data-view="home" class="on">总览</button>
+    <button data-view="sprint">⏱ 两天冲刺</button>
     <button data-view="curve">① 记忆曲线 · 熟悉</button>
     <button data-view="turbo">② 科研速通 · 认题</button>
     <button data-view="know">知识点 · 65</button>
@@ -155,20 +181,33 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <button data-view="wrong">错题本</button>
   </nav>
 
+  <!-- 两天冲刺任务板 -->
+  <section class="view" id="view-sprint">
+    <div class="card" style="margin-bottom:14px"><h3>两天怎么跑完 65 条 · 不学新花样，只跑覆盖 + 提取 + 清错</h3><p>优先级不是平均用力：<b>数字、清单、成对易混</b>最容易出选择题，也最容易丢分，排最前；逻辑对比题走慢线辨方向；纯清单/多选题不靠单张闪卡，走<b>集合认领</b>（一整组一起认，少一个、多一个都算错）。每个模块学完立刻合上自检一次，约 10 分钟后再闪回一次。</p>
+    <div class="track-grid" style="margin-top:12px"><div class="track fast"><b>⚡ 秒记快线 · 高频数字 / 清单 / 成对陷阱</b><p style="font-size:13px;color:var(--muted);margin:6px 0 0">30/10/3/1、20/80、视距4种、主标志7类、责任5种、处罚5种、再现6法、主动5/被动4。练法：数字闪击 + 关键词认领，不限时，看到就能认出。适合纯记忆型条目。</p><p style="margin-top:8px"><button class="btn amber" onclick="go('turbo')">去快线 →</button></p></div><div class="track slow"><b>🔍 深辨慢线 · 逻辑 / 对比 / 方向题</b><p style="font-size:13px;color:var(--muted);margin:6px 0 0">事件树↔事故树、割集↔径集、主动↔被动、海因里希↔博得、暗↔明适应、硬↔土路肩、5768↔7258。练法：成对辨认 + 集合认领，每道说清「为什么对的和错的干扰项差在哪」，不抢速度。</p><p style="margin-top:8px"><button class="btn blue" onclick="go('turbo')">去慢线辨认 →</button></p></div></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:10px">工作记忆保护：每 25 分钟停 5 分钟，不连刷；易混对子交错出现（学完 A 立刻对比 B），比把 A 刷十遍再刷 B 更防张冠李戴。进度条和预计剩余时间在总控台和过卡区实时显示，看到 ETA 下降才算真推进。</p></div>
+
+    <div class="grid2">
+      <div class="card"><span class="phase-pill d1">Day 1 · 11月8日晚 — 11月9日白天前段</span><h3 style="margin-top:8px">全覆盖编码日：65 条一个不漏</h3><ul class="tight" style="font-size:14px;color:var(--muted)"><li><b style="color:var(--ink)">Block 1（约50分钟）：</b>模块1 事故与安全基础 1–21 条，先看标题猜要点再翻卡（主动提取），数字和成对概念当场标星。</li><li><b style="color:var(--ink)">休息5分钟 → Block 2（约35分钟）：</b>模块2+3 人的因素+车的因素 22–36 条，快线数字优先，主动/被动当场成对对比。</li><li><b style="color:var(--ink)">休息5分钟 → Block 3（约45分钟）：</b>模块4 路的因素 37–52 条，视距、标志、护栏走集合认领，一组记全。</li><li><b style="color:var(--ink)">Block 4（约30分钟）：</b>模块5 管理与事故处理 53–65 条，责任/处罚/再现方法清单默数个数再对成员。</li><li><b style="color:var(--ink)">块末小结（每块5分钟）：</b>合上页面，口头复述本块的数字锚点和易混对子，说不出的当场回炉。</li><li><b style="color:var(--ink)">当天延迟自检：</b>学完约 10 分钟闪回新卡，当晚睡前（间隔2–4小时）只过「忘了+眼熟」和错题本，不学新内容。</li></ul><p style="margin-top:10px"><button class="btn amber" onclick="go('curve')">开始 Day 1 过卡 →</button></p></div>
+      <div class="card"><span class="phase-pill d2">Day 2 · 11月9日 — 11月10日考前</span><h3 style="margin-top:8px">延迟提取日：只提取，不学新材料</h3><ul class="tight" style="font-size:14px;color:var(--muted)"><li><b style="color:var(--ink)">晨起提取（隔夜10–16小时后）：</b>全部 65 条打乱过卡，只给关键词/纯提示，先认再翻，忘了的直接进错题重学环。</li><li><b style="color:var(--ink)">不限时认领：</b>速通区不限时，认准再选；易混对子交错刷，专治考试时的犹豫。</li><li><b style="color:var(--ink)">错题触发重学：</b>答错不只看答案——先看「为什么干扰项错」，该卡约5张卡/2分钟后重现，约20分钟/下一块再重现一次，两次都对才出环。</li><li><b style="color:var(--ink)">3 轮完整模拟：</b>至少完成 <b style="color:var(--ink)" id="mockCount2">0 / 3</b> 轮随机练手卷（每轮20题），每轮交卷后只补错题对应知识点，不整卷重刷。</li><li><b style="color:var(--ink)">考前早上（11月10日）：</b>只扫数字锚点 + 错题本 + 成对辨认，不碰新题、不熬夜。Day 2 晚上 23:00 前睡，睡眠固化 Day 1–2 的提取痕迹。</li></ul><p style="margin-top:10px"><button class="btn blue" onclick="go('turbo')">开始 Day 2 提取 →</button> <button class="btn ghost" onclick="go('practice')">做模拟轮 →</button></p></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>错后重学环 · 每一次答错都自动走完</h3><p style="font-size:14px;color:var(--muted)">① 当场看因果提醒（对的为什么对、你选的干扰项错在哪一句）→ ② 约 5 张卡 / 2 分钟后同知识点重现 → ③ 约 20 分钟后 / 下一块开头再次重现 → ④ 仍错则留在错题本，Day 2 晨起优先清。练手题和模拟卷答错同样自动进错题本，答对后自动移出。清单型题目（多选/填空的成套成员）走集合认领，不用单卡硬背——要认的是「整组齐不齐、有没有混入外人」。</p></div>
+  </section>
+
   <!-- 总览 -->
   <section class="view on" id="view-home">
-    <div class="kicker">两个板块 · 都为「认得出」服务</div>
+    <div class="kicker">两个板块 · 都为「认得出」服务 · 已按两天节奏重排</div>
     <div class="grid2">
       <div class="card">
-        <div class="modnum">板块 ①</div>
-        <h3>记忆曲线 · 熟悉知识点</h3>
-        <p>按<b>艾宾浩斯遗忘曲线</b>排复习：刚学完的卡用最短间隔反复出现，认得越熟、间隔拉得越长；一标「忘了」立刻回炉。玩法是<b>快速过卡</b>：先看标题+关键词，脑子里闪一下答案，点开对照，只分三档——秒认 / 眼熟 / 忘了。目标不是背诵，是<b>眼熟到秒认</b>。</p>
+        <div class="modnum">板块 ① · Day 1 主场</div>
+        <h3>记忆曲线 · 熟悉知识点（全覆盖编码）</h3>
+        <p>Day 1 用它把 65 条按模块<b>全覆盖</b>过完：先看标题+关键词主动猜，再翻卡对照，只分三档——秒认 / 眼熟 / 忘了。间隔已压缩为两天版：<b>学后约10分钟闪回 → 当天2–4小时后睡前复过 → 隔夜10–16小时 Day 2 提取 → 考前早上唤醒</b>。忘了的卡进错后重学环：约5张卡后重现、约20分钟后再重现。</p>
         <p style="margin-top:10px"><button class="btn amber" onclick="go('curve')">开始过卡 →</button></p>
       </div>
       <div class="card">
-        <div class="modnum">板块 ②</div>
-        <h3>科研速通 · 快速认题过考试</h3>
-        <p>用近年学习科学里证据最强的四招：<b>提取练习</b>（做选择本身就在记）、<b>交错练习</b>（易混的放一起辨）、<b>双编码</b>（文字+示意图一起记）、<b>组块化</b>（先记分类数，再记成员）。三台机器：关键词认领、数字闪击、成对辨认——全是选择题形式，练「看到关键词能认出对的那个」。</p>
+        <div class="modnum">板块 ② · Day 2 主场</div>
+        <h3>科研速通 · 快速认题过考试（延迟提取）</h3>
+        <p>用学习科学证据最强的四招：<b>提取练习、交错练习、双编码、组块化</b>。四台机器：关键词认领、数字闪击、成对辨认、<b>集合认领</b>（清单题整组认，防漏选/多选外人）。分两条线：<b>秒记快线</b>练数字与清单，<b>深辨慢线</b>练逻辑对比。Day 2 只提取、不学新材料，并完成至少 3 轮模拟。</p>
         <p style="margin-top:10px"><button class="btn blue" onclick="go('turbo')">开始速通 →</button></p>
       </div>
     </div>
@@ -190,12 +229,12 @@ ul.tight{margin:6px 0 0;padding-left:20px}
       <div class="anchor"><b>6 种再现法</b><span>能量、动量、运动学及动力学、经验公式、能量吸收分布图、模拟试验</span></div>
     </div>
 
-    <div class="kicker">怎么配合用 · 一轮 25 分钟就够</div>
+    <div class="kicker">两天配合节奏 · 每块 25 分钟 + 5 分钟休息</div>
     <div class="timeline">
-      <div class="step"><b>第 1 步 · 过卡 10 分</b><p>板块①按模块过一遍卡，只求眼熟，忘了的让系统回炉。</p></div>
-      <div class="step"><b>第 2 步 · 认题 10 分</b><p>板块②三台机器各刷一组，专练关键词→选项的反应速度。</p></div>
-      <div class="step"><b>第 3 步 · 补记 3 分</b><p>知识点没记住的，再扫一眼正文下方的小字助记，用画面和口诀补一下。</p></div>
-      <div class="step"><b>第 4 步 · 练手 2 分</b><p>练手题随便抽几道验证手感即可，不必刷完，更不用押题。</p></div>
+      <div class="step"><b>Day 1 · 过卡编码</b><p>板块①按模块全覆盖，先猜后翻，块末口头小结，忘了进重学环。</p></div>
+      <div class="step"><b>Day 1 晚 · 延迟自检</b><p>间隔2–4小时后只过忘了+眼熟+错题，约10分钟闪回新学卡。</p></div>
+      <div class="step"><b>Day 2 · 提取练习</b><p>板块②四台机器交错刷：快线冲数字清单，慢线辨易混对子，不限时认领。</p></div>
+      <div class="step"><b>Day 2 · 3轮模拟清错</b><p>至少3轮随机卷，每轮只补错题对应知识点；考前早上只扫锚点和错题本，早睡固化。</p></div>
     </div>
     <p style="margin-top:20px"><button class="btn amber" onclick="go('curve')">从板块①开始 →</button> <button class="btn ghost" onclick="go('know')">直接看 65 条知识点</button></p>
   </section>
@@ -203,10 +242,10 @@ ul.tight{margin:6px 0 0;padding-left:20px}
   <!-- 板块1 记忆曲线 -->
   <section class="view" id="view-curve">
     <div class="card" style="margin-bottom:14px">
-      <h3>怎么过卡（30 秒看完规则）</h3>
-      <p>① 卡片先只露<b>标题 + 关键词</b>，在心里认一下；② 点卡片翻开正文对照（助记只在正文下方以小字附带，没记住时再看）；③ 按真实反应点档：<b>忘了</b>=本轮马上重来，<b>眼熟</b>=下一轮再见，<b>秒认</b>=间隔拉长、靠后排。这正是记忆曲线的用法：<b>在快忘掉的时刻再复习一次</b>，比连看三遍记得牢。</p>
+      <h3>怎么过卡 · 两天版规则（30 秒看完）</h3>
+      <p>① 卡片先只露<b>标题 + 关键词（纯提示）</b>，先在心里主动提取再翻卡，不许先看正文；② 翻开对照（助记只在正文下方小字，没记住时再看）；③ 按真实反应点档：<b>忘了</b>=进错后重学环（约5张卡/2分钟后重现 + 约20分钟/下一块再重现），<b>眼熟</b>=本块末尾再见，<b>秒认</b>=推到 Day 2 提取池。Day 1 目标是全覆盖编码，Day 2 同一批卡打乱做延迟提取。</p>
       <div class="ladder" id="ladderRow"></div>
-      <p style="font-size:13px">复习间隔阶梯（艾宾浩斯经典节点，压缩到一次学习会话内执行）：立即 → 5 分钟 → 30 分钟 → 12 小时 → 1 天 → 2 天 → 4 天 → 7 天。本页按「轮次」模拟这个阶梯：忘了回第 0 轮，秒认一次跳两级。</p>
+      <p style="font-size:13px">两天间隔阶梯：学后约10分钟闪回 → 当天2–4小时后睡前复过 → 隔夜10–16小时 Day 2 晨起提取 → 11月10日考前早上只扫错题与锚点。每过25分钟停5分钟，系统按剩余卡数估算 ETA，避免一口气刷到工作记忆过载。</p>
     </div>
     <div class="toolbar" id="curveMods"></div>
     <div class="toolbar">
@@ -214,6 +253,8 @@ ul.tight{margin:6px 0 0;padding-left:20px}
       <span class="stat">秒认 <b id="cvFast">0</b></span>
       <span class="stat">眼熟 <b id="cvMid">0</b></span>
       <span class="stat">忘了 <b id="cvSlow">0</b></span>
+      <span class="stat">预计剩余 <b id="cvEta">--</b></span>
+      <span class="stat" id="cvBreakHint">专注中 · 每25分钟休息5分钟</span>
       <button class="btn ghost" id="cvRestart">重新排一轮</button>
     </div>
     <div id="curveBox"></div>
@@ -222,11 +263,13 @@ ul.tight{margin:6px 0 0;padding-left:20px}
   <!-- 板块2 科研速通 -->
   <section class="view" id="view-turbo">
     <div class="toolbar" id="turboChips">
-      <button class="chip on" data-tm="kw">关键词认领</button>
-      <button class="chip" data-tm="num">数字闪击</button>
-      <button class="chip" data-tm="pair">成对辨认</button>
+      <button class="chip on" data-tm="kw">关键词认领 · 快线</button>
+      <button class="chip" data-tm="num">数字闪击 · 快线</button>
+      <button class="chip" data-tm="pair">成对辨认 · 慢线</button>
+      <button class="chip" data-tm="set">集合认领 · 清单题</button>
     </div>
     <div class="card" style="margin-bottom:14px" id="turboIntro"></div>
+    <div class="toolbar"><span class="stat">不限时 · 认准再选，不用抢时间</span><span class="stat">答错自动进错题重学：约5题后 + 约20分钟后各重现一次</span></div>
     <div id="turboBox"></div>
     <div class="toolbar" style="margin-top:14px">
       <span class="stat">本组已答 <b id="tbDone">0</b></span>
@@ -251,7 +294,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div class="toolbar" id="typeChips"></div>
     <div class="toolbar" id="modChips"></div>
     <div id="practiceBox"></div>
-    <div class="card" style="margin-top:16px"><h3>想测一下整体手感？</h3><p>随机抽 20 道练手题打个分（判断5·单选6·多选4·填空5，每题5分），只看个大概水平，别当预测卷。</p><p style="margin-top:10px"><button class="btn ghost" onclick="startExam()">来一套随机练手卷 →</button></p><div id="examBox" style="margin-top:14px"></div></div>
+    <div class="card" style="margin-top:16px"><h3>Day 2 模拟轮 · 至少完成 3 轮</h3><p>随机抽 20 道练手题打个分（判断5·单选6·多选4·填空5，每题5分），只看覆盖和错题，不当预测卷。Day 2 要求至少跑满 <b>3 轮</b>，每轮交卷后只补错题对应知识点。当前进度：<b id="mockCount3">0 / 3 轮</b><span id="mockHint"></span></p><p style="margin-top:10px"><button class="btn ghost" onclick="startExam()">来一套随机练手卷 →</button></p><div id="examBox" style="margin-top:14px"></div></div>
   </section>
 
   <!-- 错题本 -->
@@ -259,7 +302,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div id="wrongBox"></div>
   </section>
 
-  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单（2.docx），共 65 条，已按新版编号更新。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条只有页码（p230）连标题都没有、第 64 条是计算题，两条如实留空待你补课本内容。<br><br>本地保存：熟悉度、做题记录和错题本会自动保存到这台设备当前浏览器的本地存储里，关掉页面、刷新或关掉浏览器再打开，同一台设备、同一个浏览器里进度还在；换设备、换浏览器或清除浏览器数据则不会同步，也会丢失。<p style="margin-top:10px"><button class="btn ghost" id="clearSaveBtn" type="button">清除本地保存的进度</button> <span id="clearHint"></span></p></div>
+  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单（2.docx），共 65 条，已按新版编号更新。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条已按课本 p229 补入应急预案体系与预警等级，第 64 条是计算题，仍如实留空待你补课本内容。<br><br>本地保存：熟悉度、做题记录和错题本会自动保存到这台设备当前浏览器的本地存储里，关掉页面、刷新或关掉浏览器再打开，同一台设备、同一个浏览器里进度还在；换设备、换浏览器或清除浏览器数据则不会同步，也会丢失。<p style="margin-top:10px"><button class="btn ghost" id="clearSaveBtn" type="button">清除本地保存的进度</button> <span id="clearHint"></span></p></div>
 </div>
 
 <script>
@@ -287,8 +330,8 @@ var KP=[
 [15,0,"道路环境的可靠性","诱导性：形成据以确定前进方向的空间走廊，印象形成有序的空间线形向前延伸；容错性：给意外运动状态的车辆提供宽容、安全的路况，冲出路外也不致受较大伤害；适应性：纵坡、平整度适应车辆动力性能，标志、照明、视距满足行驶要求；协调性：线形各元素取值相匹配，沿线车速无大的突变。",null,"四个词像一位好向导：诱导（指路不迷路）、容错（走错不惩罚）、适应（合脚的鞋）、协调（全程一个节奏）。首字口诀：诱容适协。",""],
 [16,0,"海因里希事故因果连锁论","5因素依次为：遗传及社会环境 → 人的缺点 → 人的不安全行为或物的不安全状态 → 事故 → 伤害。",null,"多米诺骨牌：一张倒下推倒下一张。老祖宗环境→人的缺点→不安全行为/状态→事故→伤害，五张牌顺序不能乱，抽掉中间任何一张链条就断。","domino"],
 [17,0,"博得的事故因果连锁论","事故因果连锁中一个最重要的因素是安全管理。",null,"画面：同样是多米诺，博得站在牌阵最前面举着牌子——「管理不到位，后面全白搭」。看到「博得+最重要」直接锁定：安全管理。",""],
-[18,0,"轨迹交叉论",null,"含义：人的不安全行为轨迹与物的不安全状态轨迹在同一时空交叉时，就会发生事故。预防思路就是让两条轨迹错开：管人（教育、规范行为）+管物（消除危险状态），任断一条就不交叉。","画面：两列火车在道口相撞的那一瞬——人的轨迹和物的轨迹「交叉」了。没交叉时，哪怕各自有隐患也暂时出不了事；一交叉，事故立刻发生。",""],
-[19,0,"瑟利模型",null,"含义：把事故的发生过程看作危险出现时，人的感知、认识、行为响应的连环过程；每个环节（察觉危险→认识危险→做出避让响应）都成功，事故可避免，任一环失败就可能出事故。它强调事故可从「人的信息处理」角度预防。","画面：三道闸门——看见（感知）、懂了（认识）、躲开（行动）。危险来临时三道门全开对了就平安，哪一道卡住，事故就漏进来。",""],
+[18,0,"轨迹交叉论","【课本原文 · p49 · 图2-10 轨迹交叉论事故模型】\n该理论认为：在事故发展进程中，人的因素的运动轨迹与物的因素的运动轨迹的交点，就是事故发生的时间和空间。即人的不安全行为和物的不安全状态发生于同一时间、同一空间，或者说人的不安全行为与物的不安全状态相遇，则将在此时间和空间发生事故。\n图2-10 怎么读（从左往右）：共同源头是社会因素 → 安全缺陷（基础原因 → 间接原因）；再分出两条轨迹——物的轨迹：不安全状态（物的原因）→ 起因物 → 致害物 → 事故现场（接触）；人的轨迹：不安全行为（人的原因）→ 肇事人 → 受害人。两条轨迹在事故现场交汇，产生伤害（下方四栏依次是：基础原因、间接原因、直接原因、事情经过）。\n值得注意：许多情况下人的因素与物的因素又互为因果，实际事故呈非常复杂的因果关系，并非简单地按人、物两条轨迹进行。轨迹交叉论强调人的因素、物的因素在事故致因中占有同样重要的地位；按照该理论，可以通过避免人、物两种因素的运动轨迹交叉，即避免人的不安全行为和物的不安全状态同时、同地出现，来预防事故的发生。",null,"看图记「一源、两轨、一交点」：社会因素是源头，人轨和物轨平时各走各的，一旦在同一时间、同一空间交叉（相遇），事故就发生。防事故 = 让两轨错开，任断一条就不交叉。","track"],
+[19,0,"瑟利模型","【课本原文 · p52 · 图2-11 瑟利模型】\n瑟利模型是在 1969 年由美国人瑟利（J. Surry）提出的，是一个典型的根据人的认知过程分析事故致因的理论。\n该模型把事故的发生过程分为两个阶段：危险出现（形成潜在危险）和危险释放（危险由潜在状态变为现实状态）。这两个阶段各自包括一组类似的人的信息处理过程，即感觉（对事故的感知）、认识（对事件的理解）和行为响应。\n在危险出现阶段，如果人的信息处理的各个环节都正确，危险就能被消除或得到控制；反之，就会使操作者直接面临危险。\n在危险释放阶段，如果人的信息处理过程的各个环节都是正确的，则虽然面临着已经显现出来的危险，但仍然可以避免释放的危险带来伤害或损害；反之，危险就会转化为伤害或损害。\n图2-11 怎么读：两个阶段都沿斜线逐个回答同一串问题——感觉：对危险有警告吗？感觉到了这警告吗？→ 认识：认识到了这警告吗？知道如何避免危险吗？决定要采取行动吗？→ 行为响应：能够避免吗？每问答「是（Y）」才继续往下；任一问答「否（N）」就竖直掉落：第一阶段掉进「迫近的危险」，第二阶段掉进「伤害或损害」。全程答是，第一阶段到「无危险」，第二阶段到「无伤害」。",null,"记「两阶段、三环节、六问」：危险出现和危险释放长得一样，都要过感觉→认识→行为响应三关；像闯关答题，全答 Y 才通关，任何一处 N 就直接掉到坏结果。","surry"],
 [20,0,"本质安全理论","最小化原理、替代原理、稀释原理、简化原理。",null,"口诀「小、换、稀、简」：量变小（最小化）、危险品换掉（替代）、浓度冲淡（稀释）、流程做简单（简化）。四个动作都是让系统「天生就不危险」。",""],
 [21,0,"3E原则","工程技术（Engineering）、教育（Education）、执法（Enforcement）。",null,"三个E像三脚架：工程把路和车做安全，教育把人教安全，执法把规矩立住。中文顺序记「工教执」，英文全是E开头。",""],
 [22,1,"视力","静视力、动视力、夜间视力。",null,"三只眼睛：停着看（静）、跑着看（动）、夜里看（夜间）。题干给「三种视力」直接选这组，顺序静→动→夜。",""],
@@ -321,15 +364,15 @@ var KP=[
 [49,3,"交通标志的分类","主标志：指示标志、警告标志、禁令标志、指路标志、旅游区标志、道路施工安全标志、告示标志（7类）；辅助标志：附设在主标志下，起辅助说明作用。",null,"主标志 7 个「正式队员」+ 辅助标志 1 个「小跟班」（只能贴在主标志下面补充说明）。多选题问主标志时，勾了辅助标志就丢分。",""],
 [50,3,"交通标志的位置设置要求","应根据标准、规范的设置要求，综合考虑驾驶人信息接受能力、视距要求以及车辆构成，灵活确定设置位置，且标志应位于路侧安全净区以外或进行适当防护，以免构成路侧障碍物。\n1）选位置时应确保标志信息视认性，顺利、完整地向交通参与者提供有效信息；标志在公路纵向和横向位置均要高度醒目，并与沿线环境相适应。\n2）在保证视认性的前提下，警告标志到危险点距离应满足停车视距要求；禁令、指示标志设置在交通管制的起点位置；指路标志应使交通参与者能清楚辨认交通流向。\n3）确定位置后，再根据该处道路条件（车道数、通视条件）、交通量、交通构成（大货车比例）及所传达信息重要程度，确定标志的支撑方式。",null,"记流程像「选座位」：先看得见（视认性）→ 再对距离（警告配停车视距、禁令指示放管制起点、指路认流向）→ 最后定支撑（看车道、通视、车流和货车比例）。还有一条保命的：标志自己不能当障碍物，要站在净区外或做防护。补充认特征：警告多为黄底黑边三角形、禁令多为白底红圈、指示多为蓝底、指路高速绿底/一般蓝底——给一个标志描述颜色形状，就是在考分类。",""],
 [51,3,"护栏的功能和分类",null,"功能：阻止车辆驶出路外或驶入对向车道、减轻碰撞伤害（吸收碰撞能量、使车辆平稳导向回行车道）、保护路外行人设施、诱导驾驶人视线。分类：按设置位置分路侧护栏、中央分隔带护栏、桥梁护栏；按刚度分刚性（混凝土）、半刚性（波形梁，最常用）、柔性（缆索）护栏。此条清单注明需自行总结，具体表述请以课本为准。","三兄弟按「硬度」排：缆索最软（柔性，像橡皮筋兜住）、波形梁居中（半刚性，最常见，靠变形吸能）、混凝土最硬（刚性，几乎不变形）。功能先记「拦、吸、导」三字。",""],
-[52,3,"相关国家标准",null,"GB 5768《道路交通标志和标线》：规定道路交通标志和标线的分类、颜色、形状、字符、尺寸、设置等要求。GB 7258《机动车运行安全技术条件》：规定机动车整车及发动机、制动、转向、照明等主要装置的安全技术要求，是查验和检验机动车的基本技术标准。两部标准的具体条款请以课本和现行版本为准。","配对记：5768 管「路上的牌和线」，7258 管「车本身合不合格」。一个管路、一个管车，数字别对调。",""],
+[52,3,"相关国家标准",null,"GB 5768《道路交通标志和标线》：规定道路交通标志和标线的分类、颜色、形状、字符、尺寸、设置等要求。\nGB 5768 共分 9 个部分（AI补充，请以课本为准）：第1部分 总则；第2部分 道路交通标志；第3部分 道路交通标线；第4部分 作业区；第5部分 限制速度；第6部分 铁路平交口；第7部分 非机动车和行人；第8部分 学校区域；第9部分 交通事故管理区。\nGB 7258《机动车运行安全技术条件》：规定机动车整车及发动机、制动、转向、照明等主要装置的安全技术要求，是查验和检验机动车的基本技术标准。两部标准的具体条款请以课本和现行版本为准。","配对记：5768 管「路上的牌和线」，7258 管「车本身合不合格」。一个管路、一个管车，数字别对调。GB 5768 九部分顺口溜：总、标、线，作业、限速、铁口，非行、学校、事故区。",""],
 [53,4,"驾驶员及运输车辆工作时间要求",null,"通用要求（以《道路交通安全法实施条例》等为准）：驾驶人连续驾驶机动车超过 4 小时应停车休息，休息时间不少于 20 分钟；长途客运、危险品运输等营运驾驶另有更严的夜间和累计驾驶时间限制。立法目的就是防疲劳驾驶。清单此条只有页码（p209），具体数值和适用范围请以课本为准。","数字对子「4 小时 / 20 分钟」：开满 4 小时，至少歇 20 分钟。它和第 27、28 条疲劳驾驶是一条线：疲劳是病，这条是药方。",""],
 [54,4,"道路运输货物分类","道路普通货运、货物专用运输、大型物件运输、危险货物运输。",null,"货车拉货四种「证件照」：普通的（普通货运）、专用的（专用运输）、超大的（大型物件）、危险的（危险货物）。「快递即时配送」不是分类里的，见到就排除。",""],
 [55,4,"超限运输",null,"含义：车辆的外廓尺寸、轴载或总质量超过国家规定的限值标准而上路运输的行为（长、宽、高、重任一超标即属超限）。超限会加速路面桥梁损坏、影响操纵制动安全，需按规定申请许可、按指定路线时间行驶。此条清单只有页码（p213），限值数字请以课本为准。","画面：卡车「超载版」——个子太高、身材太宽、体重超标，任一项超了就是超限。注意和「超载」（主要指重量超限载质量）表述上的侧重，考试按课本口径。",""],
-[56,4,"道路交通运输突发事件应急管理","包括四个阶段：应急准备、监测与预警、应急处理、终止与善后。",null,"救火流程四步：平时备着（准备）→ 烟雾报警（监测预警）→ 现场扑救（应急处理）→ 收尾复盘（终止善后）。从「备」到「后」，时间顺序就是答案顺序。",""],
-[57,4,"（标题待补充）",null,null,"这一条清单里只有页码 p230，连标题都没有，暂时无法助记。把那一页发来即可补上标题、正文和助记。",""],
+[56,4,"道路交通运输突发事件应急管理","【课本原文 · p229】\n道路交通运输突发事件应急管理主要包括：应急准备、监测与预警、应急处置、终止与善后等过程。\n课本同页还给出突发事件的应对流程：预防与应急准备、监测与预警、应急处置与救援、事后恢复与重建等环节。应急预案的 3 种类型和预警等级见第 57 条（同为 p229）。",null,"救火流程四步：平时备着（准备）→ 烟雾报警（监测预警）→ 现场处置（处置，不是「处理」）→ 收尾复盘（终止善后）。从「备」到「后」，时间顺序就是答案顺序。",""],
+[57,4,"应急预案体系与应急预警等级","【课本原文 · p229 · 图7-12 应急预案体系框架】\n应急预案是应急管理工作的前提和基础，是应急响应过程中的指导性文件。通常，应急预案可以分为综合应急预案、专项应急预案和现场处置方案 3 种。图7-12 的体系框架是分层的：综合应急预案在最上层，是应急预案体系的总纲；专项应急预案在中间层，针对某一类突发事件；现场处置方案在最下层，最具体、直接指导现场处置。\n【应急预警等级 · 课本原文 · p229】\n根据《突发事件应对法》，按照突发事件发生的紧急程度、发展态势和可能造成的危害程度，预警分为一级、二级、三级、四级，分别用红色、橙色、黄色、蓝色标示，一级为最高级别。\n交通运输部《公路交通突发事件应急预案》把公路交通突发事件分为四级预警：Ⅰ级预警（特别严重预警）、Ⅱ级预警（严重预警）、Ⅲ级预警（较重预警）、Ⅳ级预警（一般预警），分别用红色、橙色、黄色、蓝色来表示。交通运输部负责 Ⅰ 级预警的启动和发布。",null,"金字塔三层：综合在塔尖管总、专项在腰部管一类、现场处置方案在底座管具体。预警颜色按「红橙黄蓝」由重到轻：一级 / Ⅰ级最红最严重，千万别把顺序记反。","pyramid"],
 [58,4,"道路交通事故现场勘查",null,"通用内容：事故发生后，交警依法对现场进行勘验检查——保护现场、抢救伤员、测量绘图（现场图）、拍照录像、提取痕迹物证（刹车痕、散落物、血迹等）、询问当事人和证人，形成勘查笔录，为责任认定和事故再现提供证据。清单此条只有页码（p234），程序细节请以课本为准。","画面：刑侦剧现场组——拉警戒线、放标尺拍照、量刹车印、画现场图。记动作链：护现场→救人→测绘拍照→提痕迹→做笔录。",""],
 [59,4,"道路交通事故责任划分","全部责任、主要责任、同等责任、次要责任、无责任，共5种。",null,"天平五档：全是我的（全部）→ 多半我的（主要）→ 一人一半（同等）→ 少部分我的（次要）→ 与我无关（无责任）。没有「部分责任」这个说法，见到就排除。",""],
-[60,4,"行政处罚种类","警告、罚款、暂扣或者吊销机动车驾驶证、拘留，共4种。",null,"从轻到重四台阶：嘴上批评（警告）→ 掏钱（罚款）→ 收证（暂扣/吊销）→ 关几天（拘留）。记「警罚扣留」，注意是暂扣「或者」吊销算一类。",""],
+[60,4,"行政处罚种类","【课本原文 · p240】\n对道路交通安全违法行为的行政处罚种类包括五种：警告、罚款、暂扣机动车驾驶证、吊销机动车驾驶证、拘留（课本原文写作「警告、罚款、暂扣或者吊销机动车驾驶证、拘留五种」，暂扣与吊销分开计，共 5 种）。\n警告：公安交通管理部门对违法行为人的谴责和告诫，指出其危害性，告诫其不要再犯，是行政处罚中最轻的一种。警告应当制作行政处罚决定书、以书面形式送达当事人。注意：口头警告不属于道路交通事故行政处罚，不用制作行政处罚决定书，只由交通警察口头对违法行为人进行批评教育。\n罚款：公安交通管理部门依据规定，限令违法行为人在一定期限内向国家缴纳一定数额金钱，在经济上给予制裁，是行政处罚中最常见的一种处罚方式。\n暂扣机动车驾驶证：在一定时间内暂时剥夺其机动车驾驶资格。可以单独适用，也可以与警告、罚款、行政拘留并处。\n吊销机动车驾驶证：对实施了严重违法行为的驾驶人剥夺其驾驶资格，是对当事人驾驶资格最严厉的一种处罚。被吊销机动车驾驶证后二年内不得重新申领；构成犯罪、肇事后逃逸被吊销的，终生不得再次申领机动车驾驶证。\n行政拘留：公安机关对违法行为人在一定时间内剥夺其人身自由的处罚。",null,"五级台阶从轻到重：警告（最轻，口头的不算）→ 罚款（最常见）→ 暂扣（可单独、也可并处）→ 吊销（最严厉：一般 2 年内不得重申，犯罪/逃逸终生不得重申）→ 拘留。记「警罚暂吊拘」，数清楚是 5 种不是 4 种。",""],
 [61,4,"车辆碰撞事故力学特点","车辆碰撞可近似看成塑性碰撞；碰撞事故可看成三个过程的连续；碰撞过程中可将车辆当作刚体处理。",null,"画面：两团橡皮泥相撞——粘住变形不回弹（塑性，不是弹性）；过程分三段像慢镜头；分析时先把车当成不会变形的铁块（刚体）来算。判断题把「塑性」偷换成「弹性」就是错点。",""],
 [62,4,"事故车辆行驶速度再现分析方法","能量分析法、动量分析法、运动学及动力学分析法、经验公式分析法、能量吸收分布图法、模拟试验分析法，共6种。",null,"侦探破案六件套：看能量、看动量、看运动轨迹、套经验公式、查变形图、做模拟实验。首字连读「能动动，经图模」；「目测估计法」不在套内。",""],
 [63,4,"典型道路交通事故再现分析",null,"理解要点：把第 62 条的六种方法用到具体事故形态上——追尾、正面碰撞、侧面碰撞、撞固定物、撞行人等，结合现场刹车痕、变形量、散落物位置反推出碰撞前车速和碰撞过程。清单注明「理解为主」（p251），典型案例和计算过程请以课本为准。","理解法：先认事故「长相」（追尾/正碰/侧碰），再从痕迹倒推速度。它是第 62 条方法的实战篇，不用背定义，重在看懂推的逻辑。",""],
@@ -357,7 +400,7 @@ var Q=[
 {t:"judge",m:3,kp:39,q:"超高是把弯道内侧路面抬高、外侧降低，做成背向圆心的横坡。",a:false,e:"方向反了：超高是外侧抬高、内侧降低，做成向圆心倾斜的单向横坡。见知识点 39。"},
 {t:"judge",m:3,kp:47,q:"视距三角形是由相交道路上的停车视距所构成的三角形。",a:true,e:"见知识点 47。"},
 {t:"judge",m:4,kp:61,q:"车辆碰撞可近似看成弹性碰撞，碰撞后车辆完全恢复原状。",a:false,e:"车辆碰撞近似看成塑性碰撞。见知识点 61。"},
-{t:"judge",m:4,kp:60,q:"警告、罚款、拘留都属于道路交通行政处罚的种类。",a:true,e:"行政处罚共4种：警告、罚款、暂扣或吊销驾驶证、拘留。见知识点 60。"},
+{t:"judge",m:4,kp:60,q:"警告、罚款、拘留都属于道路交通行政处罚的种类。",a:true,e:"行政处罚共5种：警告、罚款、暂扣驾驶证、吊销驾驶证、拘留（课本 p240）。见知识点 60。"},
 {t:"judge",m:0,kp:4,q:"随机性、突发性、频发性都是道路交通事故的特点。",a:true,e:"特点共6个：随机性、突发性、复杂性、频发性、社会性、不可逆性。见知识点 4。"},
 {t:"single",m:0,kp:3,q:"特别重大死亡事故的死亡人数标准是（ ）",o:["10 人及以上","20 人及以上","30 人及以上","50 人及以上"],a:2,e:"四档下限记 30 / 10 / 3 / 1。见知识点 3。"},
 {t:"single",m:0,kp:8,q:"下列哪一项不属于道路交通系统的组成？",o:["人","车","路","天气"],a:3,e:"系统组成是人、车、路、环境；天气属于环境因素，不是并列组成。见知识点 8。"},
@@ -387,7 +430,7 @@ var Q=[
 {t:"multi",m:3,kp:41,q:"路肩的功能包括（ ）",o:["保护路面","供车辆临时停车","作为行驶车辆的侧向余宽","供行人、自行车通行使用"],a:[0,1,2,3],e:"路肩四项功能全选。见知识点 41。"},
 {t:"multi",m:3,kp:43,q:"路面抗滑性的评价指标包括（ ）",o:["横向力系数","路面摩擦系数","附着系数","平整度指数"],a:[0,1,2],e:"抗滑三指标：横向力系数、摩擦系数、附着系数。见知识点 43。"},
 {t:"multi",m:3,kp:42,q:"视距的分类包括（ ）",o:["停车视距","会车视距","超车视距","错车视距"],a:[0,1,2,3],e:"视距四种全选：停、会、超、错。见知识点 42。"},
-{t:"multi",m:4,kp:56,q:"道路交通运输突发事件应急管理包括（ ）",o:["应急准备","监测与预警","应急处理","终止与善后"],a:[0,1,2,3],e:"应急管理四阶段全选。见知识点 56。"},
+{t:"multi",m:4,kp:56,q:"道路交通运输突发事件应急管理包括（ ）",o:["应急准备","监测与预警","应急处置","终止与善后"],a:[0,1,2,3],e:"应急管理四阶段全选。见知识点 56。"},
 {t:"multi",m:4,kp:62,q:"事故车辆行驶速度再现分析的基本方法包括（ ）",o:["能量分析法","动量分析法","目测估计法","模拟试验分析法"],a:[0,1,3],e:"再现6方法：能量、动量、运动学及动力学、经验公式、能量吸收分布图、模拟试验。见知识点 62。"},
 {t:"fill",m:0,kp:3,q:"死亡事故四档的死亡人数下限依次为：特别重大 ____ 人、重大 ____ 人、较大 ____ 人、一般 ____ 人。",a:["30","10","3","1"],hint:"四个数字，从大到小",e:"30 / 10 / 3 / 1，均为下限（含本数）。见知识点 3。"},
 {t:"fill",m:0,kp:21,q:"3E 原则指：____（Engineering）、____（Education）、____（Enforcement）。（填中文）",a:["工程","教育","执法"],hint:"工程技术 / 教育 / 执法",e:"见知识点 21。"},
@@ -399,7 +442,7 @@ var Q=[
 {t:"fill",m:3,kp:39,q:"超高是把弯道____侧路面抬高、内侧降低，做成向____倾斜的单向横坡。",a:["外","圆心"],hint:"外侧抬高，向圆心倾斜",e:"见知识点 39。"},
 {t:"fill",m:3,kp:42,q:"视距分为：____视距、会车视距、____视距、错车视距。",a:["停车","超车"],hint:"停 / 超",e:"停车、会车、超车、错车。见知识点 42。"},
 {t:"fill",m:4,kp:59,q:"交通事故责任划分共 5 种：全部责任、____责任、同等责任、____责任、无责任。",a:["主要","次要"],hint:"主要 / 次要",e:"见知识点 59。"},
-{t:"fill",m:4,kp:60,q:"行政处罚的种类包括警告、____、暂扣或者吊销机动车驾驶证、____。",a:["罚款","拘留"],hint:"罚款 / 拘留",e:"见知识点 60。"},
+{t:"fill",m:4,kp:60,q:"行政处罚五种包括警告、____、暂扣机动车驾驶证、吊销机动车驾驶证、____。",a:["罚款","拘留"],hint:"罚款 / 拘留",e:"五种：警告、罚款、暂扣、吊销、拘留（课本 p240）。见知识点 60。"},
 {t:"essay",m:0,kp:9,q:"比较事件树分析与事故树分析的方向和用途。",ref:"事件树（ETA）：归纳法，从一个初始事件出发、从前往后，按各道屏障成功/失败分支，推导所有可能后果。\n事故树（FTA）：演绎法，从结果到原因，以顶上事件为根，用有向逻辑树向下追溯基本原因。\n一句话：事件树往前推后果，事故树往后找原因。",e:"对比题答法：方向相反是核心，各说清起点和终点即可。"},
 {t:"essay",m:0,kp:11,q:"比较割集与径集的含义。",ref:"割集（截止集/截集）：导致顶上事件发生的基本事件的集合——集合内事件都发生，顶上事件必然发生，反映「怎样出事」。\n径集（通集）：某些基本事件不发生则顶上事件不发生的集合——反映「怎样不出事」。",e:"先各下定义，再点一句作用方向相反。"},
 {t:"essay",m:0,kp:15,q:"简述道路环境可靠性的四方面表现，并各用一句话说明。",ref:"（1）诱导性：形成据以确定前进方向的空间走廊，线形有序向前延伸；（2）容错性：给意外运动状态的车辆提供宽容、安全的路况，冲出路外也不致较大伤害；（3）适应性：纵坡、平整度适应车辆动力性能，标志、照明、视距满足行驶要求；（4）协调性：线形各元素取值相匹配，沿线车速无大的突变。",e:"四词是骨架：诱导、容错、适应、协调，每个再补一句。"},
@@ -407,7 +450,18 @@ var Q=[
 {t:"essay",m:2,kp:34,q:"比较车辆主动安全装置与被动安全技术，各列举其全部项目。",ref:"主动安全（事前预防，共5个）：ABS、ASR、ESP、缓速器、EPB。\n被动安全（事发减轻伤害，共4个）：安全带、安全气囊、碰撞吸能技术、行人碰撞保护技术。",e:"先点明「事前防/事发保」的分界，再完整列举。"},
 {t:"essay",m:3,kp:50,q:"简述交通标志位置设置的三点要求。",ref:"1）确保视认性：纵向、横向位置均要高度醒目，与沿线环境相适应，完整地向交通参与者提供有效信息。\n2）距离与起点：警告标志到危险点的距离满足停车视距要求；禁令、指示标志设在交通管制起点；指路标志使交通参与者能清楚辨认流向。另：标志应位于路侧安全净区以外或做适当防护。\n3）支撑方式：根据道路条件（车道数、通视条件）、交通量、交通构成（大货车比例）及信息重要程度确定。",e:"按原文三点答：视认性→距离/起点→支撑方式，再加净区外/防护一句。"},
 {t:"essay",m:4,kp:62,q:"列举事故车辆行驶速度再现分析的 6 种基本方法。",ref:"（1）能量分析法；（2）动量分析法；（3）运动学及动力学分析法；（4）经验公式分析法；（5）能量吸收分布图法；（6）模拟试验分析法。",e:"纯列举题：6 个方法名写全即满分。"},
-{t:"essay",m:0,kp:5,q:"简述交通安全的四个特征。",ref:"（1）在一定危险条件下的状态，并非绝对没有事故；（2）不是瞬间结果，是对系统某一时期、阶段或状态的描述；（3）是相对的，绝对安全不存在；（4）不同时期和地域可接受的损失水平不同，衡量标准也不同。",e:"第（3）（4）条最容易漏：相对性 + 标准随时期地域而变。"}
+{t:"essay",m:0,kp:5,q:"简述交通安全的四个特征。",ref:"（1）在一定危险条件下的状态，并非绝对没有事故；（2）不是瞬间结果，是对系统某一时期、阶段或状态的描述；（3）是相对的，绝对安全不存在；（4）不同时期和地域可接受的损失水平不同，衡量标准也不同。",e:"第（3）（4）条最容易漏：相对性 + 标准随时期地域而变。"},
+{t:"judge",m:0,kp:18,q:"轨迹交叉论认为，只要存在人的不安全行为就必然发生事故，与物的不安全状态无关。",a:false,e:"轨迹交叉论强调人、物两轨在同一时间、同一空间交叉才发生事故，人和物占有同样重要的地位。见知识点 18（课本 p49）。"},
+{t:"judge",m:0,kp:19,q:"瑟利模型把事故过程分为危险出现和危险释放两个阶段，两个阶段都包括感觉、认识和行为响应。",a:true,e:"两阶段各有一组类似的信息处理过程：感觉、认识、行为响应。见知识点 19（课本 p52）。"},
+{t:"judge",m:4,kp:60,q:"交警的口头警告属于道路交通事故行政处罚。",a:false,e:"口头警告不属于行政处罚，不用制作处罚决定书，只是口头批评教育；书面的警告才是最轻的行政处罚。见知识点 60（课本 p240）。"},
+{t:"single",m:0,kp:19,q:"瑟利模型是根据什么过程分析事故致因的理论？（ ）",o:["人的认知（信息处理）过程","物的能量释放过程","管理缺陷连锁过程","车辆力学过程"],a:0,e:"瑟利模型是典型的根据人的认知过程分析事故致因的理论，1969 年由美国人瑟利提出。见知识点 19。"},
+{t:"single",m:4,kp:57,q:"公路交通突发事件 Ⅰ 级预警（特别严重）的标示颜色是（ ）",o:["蓝色","黄色","橙色","红色"],a:3,e:"红、橙、黄、蓝对应 Ⅰ、Ⅱ、Ⅲ、Ⅳ 级，Ⅰ 级最高、用红色。见知识点 57（课本 p229）。"},
+{t:"single",m:4,kp:60,q:"因构成犯罪、肇事后逃逸被吊销机动车驾驶证的，重新申领的规则是（ ）",o:["二年内不得重新申领","五年内不得重新申领","终生不得再次申领","随时可以重新申领"],a:2,e:"一般吊销是二年内不得重新申领；构成犯罪、肇事后逃逸被吊销的，终生不得再申领。见知识点 60。"},
+{t:"single",m:4,kp:60,q:"行政处罚中最常见的一种处罚方式是（ ）",o:["警告","罚款","暂扣驾驶证","拘留"],a:1,e:"罚款是最常见的；警告最轻，吊销对驾驶资格最严厉。见知识点 60。"},
+{t:"multi",m:4,kp:57,q:"应急预案通常可以分为（ ）",o:["综合应急预案","专项应急预案","现场处置方案","临时应急预案"],a:[0,1,2],e:"预案共 3 种：综合在上、专项在中、现场处置方案在下（图7-12）。见知识点 57。"},
+{t:"multi",m:4,kp:60,q:"下列属于行政处罚种类的有（ ）",o:["警告","罚款","口头警告","拘留"],a:[0,1,3],e:"行政处罚共 5 种：警告、罚款、暂扣、吊销、拘留；口头警告不属于行政处罚。见知识点 60。"},
+{t:"essay",m:0,kp:18,q:"读图简述轨迹交叉论事故模型（图2-10）的构成，并说明其预防思路。",ref:"共同源头：社会因素 → 安全缺陷（基础原因 → 间接原因）。物的轨迹：不安全状态（物的原因）→ 起因物 → 致害物 → 事故现场；人的轨迹：不安全行为（人的原因）→ 肇事人 → 受害人。两轨的交点就是事故发生的时间和空间。预防思路：避免人、物两轨交叉，即避免人的不安全行为与物的不安全状态同时、同地出现。",e:"答图题顺序：先源头、再分两轨、最后交点+预防。见知识点 18（课本 p49）。"},
+{t:"essay",m:0,kp:19,q:"简述瑟利模型（图2-11）的两个阶段及每个阶段的信息处理环节，并说明任一环节答「否」的后果。",ref:"两个阶段：危险出现（形成潜在危险）、危险释放（危险由潜在变为现实）。每阶段都包括感觉（对危险的感知）、认识（对事件的理解）、行为响应三个环节，分别用若干个是/否问题描述。各环节都正确：危险出现阶段可消除或控制危险，危险释放阶段可避免伤害或损害；任一环节失败：第一阶段使人直接面临迫近的危险，第二阶段危险转化为伤害或损害。",e:"骨架是「两阶段 × 三环节」，再补两个掉落点：迫近的危险 / 伤害或损害。见知识点 19（课本 p52）。"}
 ];
 Q.forEach(function(q,i){q.id=i;});
 var TYPES={judge:"判断题",single:"单选题",multi:"多选题",fill:"填空题",essay:"解答题"};
@@ -428,7 +482,11 @@ var KWQ=[
 {kp:44,kw:"放缓边坡 · 可逾越排水 · 无障碍平坦地带",opts:[46,41,44,43]},
 {kp:21,kw:"Engineering · Education · Enforcement",opts:[20,21,15,56]},
 {kp:35,kw:"大车下坡 · 持续减速 · 防制动过热",opts:[34,35,31,33]},
-{kp:56,kw:"准备 · 监测预警 · 处理 · 终止善后",opts:[56,58,60,54]}
+{kp:56,kw:"准备 · 监测预警 · 处置 · 终止善后",opts:[56,58,60,54]},
+{kp:18,kw:"人轨 × 物轨 · 同一时间 · 同一空间 · 交点",opts:[18,16,19,20]},
+{kp:19,kw:"1969 · 瑟利 · 危险出现 / 危险释放 · 感觉认识行为响应",opts:[19,18,17,10]},
+{kp:57,kw:"综合 · 专项 · 现场处置方案 · 红橙黄蓝",opts:[57,56,60,54]},
+{kp:60,kw:"警告 · 罚款 · 暂扣 · 吊销 · 拘留 · 五种",opts:[60,59,56,54]}
 ];
 /* 数字闪击 */
 var NUMQ=[
@@ -442,10 +500,14 @@ var NUMQ=[
 {q:"视距共分几种？",o:["2 种","3 种","4 种","5 种"],a:2,kp:42},
 {q:"交通标志主标志共几类？",o:["5 类","6 类","7 类","8 类"],a:2,kp:49},
 {q:"交通事故责任划分共几种？",o:["3 种","4 种","5 种","6 种"],a:2,kp:59},
-{q:"行政处罚共几种？",o:["3 种","4 种","5 种","6 种"],a:1,kp:60},
+{q:"行政处罚共几种？",o:["3 种","4 种","5 种","6 种"],a:2,kp:60},
 {q:"速度再现分析方法共几种？",o:["4 种","5 种","6 种","8 种"],a:2,kp:62},
 {q:"汽车操纵稳定性评价项目共几项？",o:["4 项","5 项","6 项","8 项"],a:2,kp:32},
-{q:"（AI补充）连续驾驶多久应停车休息？",o:["2 小时","3 小时","4 小时","6 小时"],a:2,kp:53}
+{q:"（AI补充）连续驾驶多久应停车休息？",o:["2 小时","3 小时","4 小时","6 小时"],a:2,kp:53},
+{q:"瑟利模型是哪一年提出的？",o:["1949 年","1969 年","1989 年","2009 年"],a:1,kp:19},
+{q:"应急预案共分几种？",o:["2 种","3 种","4 种","5 种"],a:1,kp:57},
+{q:"一般被吊销驾驶证后多久内不得重新申领？",o:["半年内","一年内","二年内","五年内"],a:2,kp:60},
+{q:"预警等级中最高的是几级、什么颜色？",o:["一级 · 蓝色","一级 · 红色","四级 · 红色","四级 · 蓝色"],a:1,kp:57}
 ];
 /* 成对辨认 */
 var PAIRQ=[
@@ -458,7 +520,10 @@ var PAIRQ=[
 {a:"硬路肩",b:"土路肩",qa:"能有效降低单车冲出事故和正面碰撞事故的是？",side:0,n:"硬路肩管「降事故」，土路肩管「护路面路基+余宽」。"},
 {a:"GB 5768",b:"GB 7258",qa:"《道路交通标志和标线》是哪一部？",side:0,n:"5768 管路上的牌和线，7258 管车本身的技术条件。"},
 {a:"不足转向",b:"过多转向",qa:"转向量过大、转弯转过头的是？",side:1,n:"不足=转不够，过多=转过头，中间是中性。"},
-{a:"海因里希",b:"博得",qa:"强调「安全管理是连锁中最重要因素」的是谁的理论？",side:1,n:"博得站在多米诺最前面抓管理；海因里希记五因素顺序。"}
+{a:"海因里希",b:"博得",qa:"强调「安全管理是连锁中最重要因素」的是谁的理论？",side:1,n:"博得站在多米诺最前面抓管理；海因里希记五因素顺序。"},
+{a:"警告（书面）",b:"口头警告",qa:"不制作处罚决定书、只由交警口头批评教育的是？",side:1,n:"口头警告不属于行政处罚；书面警告才是最轻的行政处罚。"},
+{a:"暂扣驾驶证",b:"吊销驾驶证",qa:"被处以二年内不得重新申领、犯罪或逃逸者终生不得申领的是？",side:1,n:"吊销是对驾驶资格最严厉的处罚；暂扣只是暂时剥夺、可单独也可并处。"},
+{a:"一级预警",b:"四级预警",qa:"用红色标示、级别最高的是？",side:0,n:"红橙黄蓝对应一二三四级，一级最高、最严重。"}
 ];
 </script>
 
@@ -466,14 +531,20 @@ var PAIRQ=[
 /* ============ 状态（本地保存，关掉不丢） ============ */
 var STORAGE_KEY="traffic-safety-learning-v1";
 var _restoredTb=null;
+var mockRounds=0;
 var state={done:{},wrong:{},essayDone:{}};
 var fam={}; /* 知识点熟悉度 0未见 1眼熟 2秒认 */
 KP.forEach(function(k){fam[k[0]]=0;});
+/* 优先级：数字/清单/成对易混 = 高优先快线；逻辑对比 = 慢线；其余覆盖优先 */
+var PRIO_HIGH={3:1,7:1,16:1,17:1,21:1,29:1,34:1,36:1,42:1,49:1,57:1,59:1,60:1,62:1,32:1};
+var PRIO_SET={2:1,4:1,15:1,20:1,22:1,24:1,26:1,28:1,31:1,32:1,34:1,36:1,41:1,43:1,49:1,54:1,56:1,57:1,59:1,60:1,62:1};
+var PRIO_SLOW={9:1,10:1,11:1,12:1,16:1,17:1,18:1,19:1,25:1,34:1,36:1,46:1,52:1};
+function prioTag(n){var h="";if(PRIO_HIGH[n])h+=' <span class="prio prio-high">高频·快线</span>';if(PRIO_SET[n])h+=' <span class="prio prio-set">集合认领</span>';if(PRIO_SLOW[n])h+=' <span class="prio prio-mid">深辨·慢线</span>';return h;}
 function saveProgress(){
   try{
     var td=(typeof tbDone==="number")?tbDone:(_restoredTb?_restoredTb.done:0);
     var to=(typeof tbOk==="number")?tbOk:(_restoredTb?_restoredTb.ok:0);
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({fam:fam,done:state.done,wrong:state.wrong,essayDone:state.essayDone,tbDone:td,tbOk:to,savedAt:Date.now()}));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({fam:fam,done:state.done,wrong:state.wrong,essayDone:state.essayDone,tbDone:td,tbOk:to,mockRounds:mockRounds,savedAt:Date.now()}));
     var el=document.getElementById("saveHint");
     if(el)el.textContent="已保存到本机";
   }catch(e){}
@@ -488,6 +559,7 @@ function loadProgress(){
     if(data.done)state.done=data.done;
     if(data.wrong)state.wrong=data.wrong;
     if(data.essayDone)state.essayDone=data.essayDone;
+    if(typeof data.mockRounds==="number")mockRounds=data.mockRounds;
     if(typeof data.tbDone==="number"||typeof data.tbOk==="number")_restoredTb={done:data.tbDone||0,ok:data.tbOk||0};
     var el=document.getElementById("saveHint");
     if(el)el.textContent="已恢复上次进度 · 已保存到本机";
@@ -497,13 +569,33 @@ loadProgress();
 function kpByNo(n){for(var i=0;i<KP.length;i++)if(KP[i][0]===n)return KP[i];return null;}
 function refreshStats(){
   var known=KP.filter(function(k){return fam[k[0]]===2;}).length;
+  var seen=KP.filter(function(k){return fam[k[0]]>0;}).length;
   document.getElementById("stKnown").textContent=known;
   var ids=Object.keys(state.done),ok=0;
   ids.forEach(function(id){if(state.done[id])ok++;});
   document.getElementById("stAcc").textContent=ids.length?ok+" / "+ids.length:"—";
   document.getElementById("stWrong").textContent=Object.keys(state.wrong).length;
-  var total=known+ids.length*0; /* 进度条以秒认数为主 */
   document.getElementById("progBar").style.width=Math.round(known/65*100)+"%";
+  var ct=document.getElementById("coverTop");if(ct)ct.textContent=seen+" / 65";
+  var mc=mockRounds+" / 3";["mockCountTop","mockCount2","mockCount3"].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=mc;});
+  var mh=document.getElementById("mockHint");if(mh)mh.textContent=mockRounds>=3?" · 已达标，继续只清错题":" · 还差 "+(3-mockRounds)+" 轮";
+  renderSprintTasks();
+}
+function renderSprintTasks(){
+  var el=document.getElementById("sprintTasks");if(!el)return;
+  var seen=KP.filter(function(k){return fam[k[0]]>0;}).length;
+  var known=KP.filter(function(k){return fam[k[0]]===2;}).length;
+  var wrongN=Object.keys(state.wrong).length;
+  var tasks=[
+    {t:"Day 1 · 模块1–5 全覆盖过卡（已覆盖 "+seen+" / 65）",done:seen>=65},
+    {t:"Day 1 晚 · 间隔2–4小时延迟自检：只过忘了+眼熟（秒认 "+known+" 条）",done:known>=40},
+    {t:"Day 2 · 打乱提取 + 不限时认领 + 易混对子交错",done:false},
+    {t:"Day 2 · 至少 3 轮完整模拟（已完成 "+mockRounds+" / 3）",done:mockRounds>=3},
+    {t:"错题清零 · 当前错题本 "+wrongN+" 道，答对自动移出",done:wrongN===0&&Object.keys(state.done).length>0},
+    {t:"考前早上 · 只扫数字锚点+错题本，前一晚23:00前睡",done:false}
+  ];
+  el.innerHTML=tasks.map(function(x){return '<li class="'+(x.done?"done":"")+'"><i>'+(x.done?"✓":"·")+'</i><span>'+x.t+'</span></li>';}).join("");
+  var eta=document.getElementById("sprintEta");if(eta){var rem=65-seen;eta.textContent=rem>0?"约 "+(Math.round(rem*0.7)+90)+" 分钟":"已覆盖 · 转提取清错";}
 }
 function record(q,correct){
   if(q.t==="essay"){state.essayDone[q.id]=true; if(!correct)state.wrong[q.id]=true; else delete state.wrong[q.id];}
@@ -527,6 +619,9 @@ function diagram(key){
   if(key==="eta")return '<svg viewBox="0 0 340 120" role="img" aria-label="事件树示意图"><rect x="4" y="46" width="72" height="28" rx="6" fill="#c47f00"/><text x="40" y="64" text-anchor="middle" font-size="11" fill="#191c1f" font-weight="bold">刹车失灵</text><line x1="76" y1="60" x2="120" y2="30" stroke="currentColor"/><line x1="76" y1="60" x2="120" y2="90" stroke="currentColor"/><rect x="120" y="16" width="86" height="28" rx="6" fill="#0e6b4f"/><text x="163" y="34" text-anchor="middle" font-size="11" fill="#fff">避让成功→平安</text><rect x="120" y="76" width="86" height="28" rx="6" fill="#b42318"/><text x="163" y="94" text-anchor="middle" font-size="11" fill="#fff">避让失败↓</text><line x1="206" y1="90" x2="246" y2="76" stroke="currentColor"/><line x1="206" y1="90" x2="246" y2="104" stroke="currentColor"/><text x="250" y="80" font-size="11">护栏挡住→轻伤</text><text x="250" y="108" font-size="11">没挡住→重伤</text></svg>';
   if(key==="fta")return '<svg viewBox="0 0 340 110" role="img" aria-label="事故树示意图"><rect x="120" y="4" width="100" height="26" rx="6" fill="#b42318"/><text x="170" y="21" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">顶上事件：事故</text><line x1="170" y1="30" x2="170" y2="44" stroke="currentColor"/><rect x="148" y="44" width="44" height="20" rx="4" fill="#c47f00"/><text x="170" y="58" text-anchor="middle" font-size="11" fill="#191c1f">逻辑门</text><line x1="150" y1="64" x2="70" y2="82" stroke="currentColor"/><line x1="190" y1="64" x2="270" y2="82" stroke="currentColor"/><rect x="16" y="82" width="108" height="24" rx="6" fill="#eceae3"/><text x="70" y="98" text-anchor="middle" font-size="11" fill="#191c1f">基本原因 1</text><rect x="216" y="82" width="108" height="24" rx="6" fill="#eceae3"/><text x="270" y="98" text-anchor="middle" font-size="11" fill="#191c1f">基本原因 2 …</text></svg>';
   if(key==="domino")return '<svg viewBox="0 0 340 92" role="img" aria-label="海因里希多米诺示意图"><g font-size="10.5" text-anchor="middle"><rect x="4" y="22" width="56" height="52" rx="5" fill="#c47f00" transform="rotate(-14 32 48)"/><text x="32" y="88">遗传环境</text><rect x="72" y="22" width="56" height="52" rx="5" fill="#d99a26" transform="rotate(-8 100 48)"/><text x="100" y="88">人的缺点</text><rect x="140" y="22" width="56" height="52" rx="5" fill="#e5b95c"/><text x="168" y="88">不安全行为/状态</text><rect x="208" y="22" width="56" height="52" rx="5" fill="#b42318"/><text x="236" y="88" fill="#b42318" font-weight="bold">事故</text><rect x="276" y="22" width="56" height="52" rx="5" fill="#7a140c"/><text x="304" y="88" fill="#b42318" font-weight="bold">伤害</text></g></svg>';
+  if(key==="track")return '<svg class="fig" viewBox="0 0 340 178" role="img" aria-label="图2-10 轨迹交叉论事故模型简化示意图"><g font-size="10.5" text-anchor="middle"><rect x="2" y="66" width="54" height="26" rx="5" fill="#eceae3"/><text x="29" y="83">社会因素</text><text x="29" y="108" font-size="9.5">基础原因</text><line x1="56" y1="79" x2="68" y2="79" stroke="currentColor"/><rect x="68" y="66" width="54" height="26" rx="5" fill="#eceae3"/><text x="95" y="83">安全缺陷</text><text x="95" y="108" font-size="9.5">间接原因</text><line x1="122" y1="72" x2="140" y2="34" stroke="currentColor"/><line x1="122" y1="86" x2="140" y2="124" stroke="currentColor"/><text x="172" y="108" font-size="9.5">直接原因</text><text x="262" y="108" font-size="9.5">事情经过</text><rect x="140" y="20" width="66" height="28" rx="5" fill="#b42318"/><text x="173" y="32" fill="#fff" font-weight="bold">不安全状态</text><text x="173" y="44" fill="#fff" font-size="9">物的原因 · 物轨</text><line x1="206" y1="34" x2="218" y2="34" stroke="currentColor"/><rect x="218" y="20" width="46" height="28" rx="5" fill="#e5b95c"/><text x="241" y="38" fill="#191c1f">起因物</text><line x1="264" y1="34" x2="276" y2="34" stroke="currentColor"/><rect x="276" y="20" width="46" height="28" rx="5" fill="#e5b95c"/><text x="299" y="38" fill="#191c1f">致害物</text><line x1="299" y1="48" x2="299" y2="60" stroke="currentColor"/><rect x="140" y="110" width="66" height="28" rx="5" fill="#175cd3"/><text x="173" y="122" fill="#fff" font-weight="bold">不安全行为</text><text x="173" y="134" fill="#fff" font-size="9">人的原因 · 人轨</text><line x1="206" y1="124" x2="218" y2="124" stroke="currentColor"/><rect x="218" y="110" width="46" height="28" rx="5" fill="#bfd4fb"/><text x="241" y="128" fill="#191c1f">肇事人</text><line x1="264" y1="124" x2="276" y2="124" stroke="currentColor"/><rect x="276" y="110" width="46" height="28" rx="5" fill="#bfd4fb"/><text x="299" y="128" fill="#191c1f">受害人</text><rect x="262" y="60" width="74" height="28" rx="5" fill="#191c1f"/><text x="299" y="72" fill="#fff" font-weight="bold">事故现场</text><text x="299" y="84" fill="#fff" font-size="9">接触 · 交点</text><line x1="299" y1="88" x2="299" y2="110" stroke="#b42318" stroke-width="2"/><text x="299" y="154" fill="#b42318" font-weight="bold">↑ 两轨在此交汇 → 伤害</text><text x="170" y="170" font-size="10">交点 = 事故发生的时间和空间 · 同时、同地出现才出事</text></g></svg>';
+  if(key==="surry")return '<svg class="fig" viewBox="0 0 340 216" role="img" aria-label="图2-11 瑟利模型简化示意图"><g font-size="10.5" text-anchor="middle"><text x="4" y="16" text-anchor="start" font-weight="bold">阶段一 · 危险出现（潜在危险）</text><rect x="2" y="24" width="86" height="34" rx="5" fill="#e5b95c"/><text x="45" y="38" fill="#191c1f" font-weight="bold">感觉</text><text x="45" y="51" fill="#191c1f" font-size="9">有警告吗？感觉到吗？</text><line x1="88" y1="41" x2="98" y2="41" stroke="currentColor"/><text x="93" y="34" font-size="9">Y</text><rect x="98" y="24" width="118" height="34" rx="5" fill="#e5b95c"/><text x="157" y="38" fill="#191c1f" font-weight="bold">认识</text><text x="157" y="51" fill="#191c1f" font-size="9">认识到？知如何避免？决定行动？</text><line x1="216" y1="41" x2="226" y2="41" stroke="currentColor"/><text x="221" y="34" font-size="9">Y</text><rect x="226" y="24" width="76" height="34" rx="5" fill="#e5b95c"/><text x="264" y="38" fill="#191c1f" font-weight="bold">行为响应</text><text x="264" y="51" fill="#191c1f" font-size="9">能够避免吗？</text><line x1="302" y1="41" x2="312" y2="41" stroke="currentColor"/><text x="307" y="34" font-size="9">Y</text><rect x="312" y="24" width="26" height="34" rx="5" fill="#0e6b4f"/><text x="325" y="38" fill="#fff" font-size="9" font-weight="bold">无</text><text x="325" y="51" fill="#fff" font-size="9" font-weight="bold">危险</text><line x1="157" y1="58" x2="157" y2="70" stroke="#b42318" stroke-width="2"/><text x="170" y="67" fill="#b42318" font-size="9" text-anchor="start">任一问答 N ↓</text><rect x="98" y="72" width="150" height="22" rx="5" fill="#b42318"/><text x="173" y="87" fill="#fff" font-weight="bold">迫近的危险</text><text x="4" y="122" text-anchor="start" font-weight="bold">阶段二 · 危险释放（潜在 → 现实）</text><rect x="2" y="130" width="86" height="34" rx="5" fill="#bfd4fb"/><text x="45" y="144" fill="#191c1f" font-weight="bold">感觉</text><text x="45" y="157" fill="#191c1f" font-size="9">有警告吗？感觉到吗？</text><line x1="88" y1="147" x2="98" y2="147" stroke="currentColor"/><text x="93" y="140" font-size="9">Y</text><rect x="98" y="130" width="118" height="34" rx="5" fill="#bfd4fb"/><text x="157" y="144" fill="#191c1f" font-weight="bold">认识</text><text x="157" y="157" fill="#191c1f" font-size="9">认识到？知如何避免？决定行动？</text><line x1="216" y1="147" x2="226" y2="147" stroke="currentColor"/><text x="221" y="140" font-size="9">Y</text><rect x="226" y="130" width="76" height="34" rx="5" fill="#bfd4fb"/><text x="264" y="144" fill="#191c1f" font-weight="bold">行为响应</text><text x="264" y="157" fill="#191c1f" font-size="9">能够避免吗？</text><line x1="302" y1="147" x2="312" y2="147" stroke="currentColor"/><text x="307" y="140" font-size="9">Y</text><rect x="312" y="130" width="26" height="34" rx="5" fill="#0e6b4f"/><text x="325" y="144" fill="#fff" font-size="9" font-weight="bold">无</text><text x="325" y="157" fill="#fff" font-size="9" font-weight="bold">伤害</text><line x1="157" y1="164" x2="157" y2="176" stroke="#b42318" stroke-width="2"/><text x="170" y="173" fill="#b42318" font-size="9" text-anchor="start">任一问答 N ↓</text><rect x="98" y="178" width="150" height="22" rx="5" fill="#b42318"/><text x="173" y="193" fill="#fff" font-weight="bold">伤害或损害</text><text x="170" y="212" font-size="10">Y 表示是 · N 表示否 · 两阶段问题相同，掉落点不同</text></g></svg>';
+  if(key==="pyramid")return '<svg class="fig" viewBox="0 0 340 196" role="img" aria-label="图7-12 应急预案体系框架与预警等级示意图"><g font-size="10.5" text-anchor="middle"><polygon points="150,8 190,8 206,38 134,38" fill="#b42318"/><text x="170" y="28" fill="#fff" font-weight="bold">综合应急预案</text><polygon points="130,42 210,42 228,72 112,72" fill="#c47f00"/><text x="170" y="62" fill="#191c1f" font-weight="bold">专项应急预案</text><polygon points="108,76 232,76 254,106 86,106" fill="#0e6b4f"/><text x="170" y="96" fill="#fff" font-weight="bold">现场处置方案</text><text x="170" y="122" font-size="10">图7-12：综合在上管总纲 · 专项在中 · 现场处置方案在下最具体</text><rect x="2" y="132" width="80" height="30" rx="5" fill="#b42318"/><text x="42" y="145" fill="#fff" font-weight="bold">Ⅰ级 · 红</text><text x="42" y="158" fill="#fff" font-size="9">特别严重 · 最高</text><rect x="88" y="132" width="80" height="30" rx="5" fill="#e8730c"/><text x="128" y="145" fill="#fff" font-weight="bold">Ⅱ级 · 橙</text><text x="128" y="158" fill="#fff" font-size="9">严重</text><rect x="174" y="132" width="80" height="30" rx="5" fill="#eab308"/><text x="214" y="145" fill="#191c1f" font-weight="bold">Ⅲ级 · 黄</text><text x="214" y="158" fill="#191c1f" font-size="9">较重</text><rect x="260" y="132" width="78" height="30" rx="5" fill="#175cd3"/><text x="299" y="145" fill="#fff" font-weight="bold">Ⅳ级 · 蓝</text><text x="299" y="158" fill="#fff" font-size="9">一般</text><text x="170" y="180" font-size="10">预警颜色：红 &gt; 橙 &gt; 黄 &gt; 蓝 · 一级 / Ⅰ级最高</text></g></svg>';
   if(key==="sight")return '<svg viewBox="0 0 340 118" role="img" aria-label="视距四种示意图"><g font-size="11"><text x="4" y="20" font-weight="bold">停车</text><line x1="52" y1="16" x2="180" y2="16" stroke="#0e6b4f" stroke-width="3"/><text x="188" y="20">看见障碍→停住，最短</text><text x="4" y="48" font-weight="bold">会车</text><line x1="52" y1="44" x2="240" y2="44" stroke="#c47f00" stroke-width="3"/><text x="248" y="48">约停车的 2 倍</text><text x="4" y="76" font-weight="bold">超车</text><line x1="52" y1="72" x2="300" y2="72" stroke="#b42318" stroke-width="3"/><text x="4" y="94">借道超完再并回，最长</text><text x="120" y="94" font-weight="bold">错车</text><text x="168" y="94">低等级路擦身而过用</text></g></svg>';
   return "";
 }
@@ -552,7 +647,7 @@ function renderKpChips(){
 }
 function kpCard(k){
   var pending=!k[3]&&!k[4];
-  var tags=pending?'<span class="tag amber">待补充 · '+(k[0]===64?"p272 · 计算题":"p230")+'</span>':'<span class="tag">'+MODULES[k[1]]+'</span>'+(fam[k[0]]===2?' <span class="tag green">已秒认</span>':fam[k[0]]===1?' <span class="tag amber">眼熟中</span>':"");
+  var tags=pending?'<span class="tag amber">待补充 · '+(k[0]===64?"p272 · 计算题":"p230")+'</span>':'<span class="tag">'+MODULES[k[1]]+'</span>'+prioTag(k[0])+(fam[k[0]]===2?' <span class="tag green">已秒认</span>':fam[k[0]]===1?' <span class="tag amber">眼熟中</span>':"");
   var h='<div class="kp'+(pending?" pending":"")+'"><div class="kp-head"><div style="display:flex;gap:10px;align-items:flex-start"><span class="kp-no">'+k[0]+'</span><h3>'+esc(k[2])+'</h3></div><div>'+tags+'</div></div>';
   if(k[3])h+='<div class="kp-body">'+esc(k[3])+'</div>';
   if(k[4])h+='<div class="ai-box"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>';
@@ -573,7 +668,7 @@ document.getElementById("kpSearch").addEventListener("input",renderKp);
 renderKpChips();renderKp();
 
 /* ============ 板块① 记忆曲线过卡 ============ */
-document.getElementById("ladderRow").innerHTML=["立即","5分钟","30分钟","12小时","1天","2天","4天","7天"].map(function(s,i){return '<span class="'+(i<3?"hot":"")+'">第'+(i+1)+'次 · '+s+'</span>';}).join("");
+document.getElementById("ladderRow").innerHTML=["学后约10分钟闪回","当天2–4小时后","隔夜10–16小时 · Day2","考前早上唤醒"].map(function(s,i){return '<span class="'+(i<2?"hot":"")+'">间隔'+(i+1)+' · '+s+'</span>';}).join("");
 var cvQueue=[],cvCur=null,cvFlipped=false,cvMod=-1,cvCount={fast:0,mid:0,slow:0};
 function curveModule(mi){cvMod=mi;renderCurveChips();resetCurve();go("curve");}
 function renderCurveChips(){
@@ -589,10 +684,13 @@ function resetCurve(){
   cvCount={fast:0,mid:0,slow:0};nextCard();
 }
 function curveStats(){
-  document.getElementById("cvLeft").textContent=cvQueue.length+(cvCur?1:0);
+  var left=cvQueue.length+(cvCur?1:0);
+  document.getElementById("cvLeft").textContent=left;
   document.getElementById("cvFast").textContent=cvCount.fast;
   document.getElementById("cvMid").textContent=cvCount.mid;
   document.getElementById("cvSlow").textContent=cvCount.slow;
+  var eta=document.getElementById("cvEta");if(eta)eta.textContent=left===0?"已完成":("约 "+Math.max(1,Math.round(left*0.6))+" 分钟");
+  var bh=document.getElementById("cvBreakHint");if(bh){var doneN=cvCount.fast+cvCount.mid+cvCount.slow;bh.textContent=(doneN>0&&doneN%25===0)?"已过 "+doneN+" 张 · 停5分钟再继续":"专注中 · 每25分钟休息5分钟";}
 }
 function nextCard(){
   cvCur=cvQueue.shift()||null;cvFlipped=false;curveStats();renderCard();
@@ -614,8 +712,8 @@ function renderCard(){
   }else{
     var body=(k[3]?'<div class="kp-body" style="text-align:left">'+esc(k[3])+'</div>':"")+(k[4]?'<div class="ai-box" style="text-align:left"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>':"")+(k[5]?'<div class="mn-box" style="text-align:left"><span class="mn-tag">助记 · </span><span class="mn-text">'+esc(k[5])+'</span>'+diagram(k[6])+'</div>':"");
     box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag amber">第 '+k[0]+' 条</span><span class="tag">'+MODULES[k[1]]+'</span></div><div class="qtext" style="text-align:left">'+esc(k[2])+'</div>'+body+'<div class="rateRow"><button class="r-no" id="rateNo">忘了<small>立刻回炉 · 本轮重来</small></button><button class="r-mid" id="rateMid">眼熟<small>下一轮再见</small></button><button class="r-yes" id="rateYes">秒认<small>间隔拉长 · 靠后排</small></button></div></div>';
-    document.getElementById("rateNo").addEventListener("click",function(){fam[k[0]]=0;cvCount.slow++;cvQueue.splice(Math.min(3,cvQueue.length),0,k);refreshStats();saveProgress();nextCard();});
-    document.getElementById("rateMid").addEventListener("click",function(){if(fam[k[0]]<1)fam[k[0]]=1;cvCount.mid++;cvQueue.push(k);refreshStats();saveProgress();nextCard();});
+    document.getElementById("rateNo").addEventListener("click",function(){fam[k[0]]=0;cvCount.slow++;/* 错后重学环：约5张卡/2分钟后重现 + 约20分钟/下一块再重现 */cvQueue.splice(Math.min(5,cvQueue.length),0,k);if(cvQueue.length>12)cvQueue.splice(Math.min(16,cvQueue.length),0,k);refreshStats();saveProgress();nextCard();});
+    document.getElementById("rateMid").addEventListener("click",function(){if(fam[k[0]]<1)fam[k[0]]=1;cvCount.mid++;/* 眼熟：本块末尾再见，相当于约20分钟后第二触点 */cvQueue.push(k);refreshStats();saveProgress();nextCard();});
     document.getElementById("rateYes").addEventListener("click",function(){fam[k[0]]=2;cvCount.fast++;refreshStats();saveProgress();nextCard();});
   }
 }
@@ -625,10 +723,22 @@ renderCurveChips();resetCurve();
 /* ============ 板块② 科研速通 ============ */
 var tbMode="kw",tbDone=0,tbOk=0,tbCur=null,tbAnswered=false;
 if(_restoredTb){tbDone=_restoredTb.done;tbOk=_restoredTb.ok;}
+/* 集合认领：清单型知识点整组认领，混入一个外人或漏一个都算错——不用单卡背清单 */
+var SETQ=[
+{kp:42,prompt:"视距四种 · 哪一组完整且无外人？",good:"停车 · 会车 · 超车 · 错车",bad:"停车 · 会车 · 超车 · 夜间视距",why:"夜间视力是第22条视力分类，不是视距。视距只有停/会/超/错四种，整组认领才防多选题漏选。"},
+{kp:34,prompt:"主动安全装置5个 · 哪一组无外人？",good:"ABS · ASR · ESP · 缓速器 · EPB",bad:"ABS · ASR · ESP · 安全气囊 · EPB",why:"安全气囊是被动安全。主动5个全是事前防失控的，混入事后保命的就算错。"},
+{kp:36,prompt:"被动安全技术4项 · 哪一组完整？",good:"安全带 · 安全气囊 · 碰撞吸能 · 行人碰撞保护",bad:"安全带 · 安全气囊 · ESP · 行人碰撞保护",why:"ESP是主动安全。被动4项全是撞上之后减轻伤害的。"},
+{kp:49,prompt:"主标志7类 · 哪一组无外人？",good:"指示 · 警告 · 禁令 · 指路 · 旅游区 · 道路施工安全 · 告示",bad:"指示 · 警告 · 禁令 · 指路 · 旅游区 · 辅助标志 · 告示",why:"辅助标志只能附在主标志下，不是主标志。主标志7类要整组认。"},
+{kp:62,prompt:"速度再现6法 · 哪一组无外人？",good:"能量 · 动量 · 运动学及动力学 · 经验公式 · 能量吸收分布图 · 模拟试验",bad:"能量 · 动量 · 目测估计 · 经验公式 · 能量吸收分布图 · 模拟试验",why:"目测估计法不在6法内。清单题先数个数（6），再核成员有没有外人。"},
+{kp:59,prompt:"责任划分5种 · 哪一组完整？",good:"全部 · 主要 · 同等 · 次要 · 无责任",bad:"全部 · 主要 · 同等 · 部分 · 无责任",why:"没有「部分责任」这个说法。5档天平要整组记。"},
+{kp:60,prompt:"行政处罚5种 · 哪一组完整且无外人？",good:"警告 · 罚款 · 暂扣驾驶证 · 吊销驾驶证 · 拘留",bad:"警告 · 罚款 · 口头警告 · 吊销驾驶证 · 拘留",why:"口头警告不属于行政处罚（课本 p240）。处罚共5种，暂扣和吊销要分开数，别再记成4种。"},
+{kp:57,prompt:"应急预案3种 · 哪一组完整且无外人？",good:"综合应急预案 · 专项应急预案 · 现场处置方案",bad:"综合应急预案 · 专项应急预案 · 临时处置方案",why:"第三种叫现场处置方案，在金字塔最下层、最具体。预案只有这3种（图7-12）。"}
+];
 var TBINTRO={
-kw:"<h3>关键词认领 · 提取练习 + 组块</h3><p>只给<b>关键词组合</b>，从 4 个知识点标题里认出它属于哪一条。选择题的本质就是这个动作：题干给线索，你认领答案。不看正文、不默写，<b>认得快就是会</b>。</p>",
-num:"<h3>数字闪击 · 数字组块</h3><p>考试里的数字题靠<b>锚点</b>不靠计算：30/10/3/1、20/80、5主动4被动……每道只问一个数，和它的干扰项放一起，逼自己在 3 秒内锁定。</p>",
-pair:"<h3>成对辨认 · 交错练习</h3><p>把最容易混的两条<b>放一起对比</b>，是研究证实对付「张冠李戴」最有效的方法：割集↔径集、事件树↔事故树、暗适应↔明适应……每道只判一个方向，判完看一句话点破区别。</p>"};
+kw:"<h3>关键词认领 · 秒记快线 · 提取练习 + 组块</h3><p>只给<b>关键词组合（纯提示）</b>，从 4 个标题里认出它属于哪一条，<b>不限时</b>作答，认准再选。适合高频数字、定义类条目。答错看因果提醒：不只告诉你对的，还说清干扰项错在哪。</p>",
+num:"<h3>数字闪击 · 秒记快线 · 数字组块</h3><p>数字题靠<b>锚点</b>不靠计算：30/10/3/1、20/80、5主动4被动……每道只问一个数，不限时，看到数字能对上锚点就行。答错自动进重学节奏。</p>",
+pair:"<h3>成对辨认 · 深辨慢线 · 交错练习</h3><p>把最容易混的两条<b>交错对比</b>，专治张冠李戴：割集↔径集、事件树↔事故树、暗↔明适应……不抢速度，每道说清方向差在哪。闪卡背单条治不了这类题，必须成对辨。</p>",
+set:"<h3>集合认领 · 清单题专用 · 整组识别</h3><p>多选/填空的清单题<b>不用单张闪卡硬背</b>：这里每次给你一整组，判断它是否完整、有没有混入外人。少一个、混一个都算错——练的是考试里最常见的漏选和误选。</p>"};
 function renderTurboIntro(){document.getElementById("turboIntro").innerHTML=TBINTRO[tbMode];}
 document.querySelectorAll("#turboChips .chip").forEach(function(c){c.addEventListener("click",function(){tbMode=c.dataset.tm;document.querySelectorAll("#turboChips .chip").forEach(function(x){x.classList.toggle("on",x===c);});renderTurboIntro();nextTurbo();});});
 function tbStat(){document.getElementById("tbDone").textContent=tbDone;document.getElementById("tbOk").textContent=tbOk;}
@@ -644,7 +754,12 @@ function nextTurbo(){
   }else if(tbMode==="num"){
     var nq=NUMQ[Math.floor(Math.random()*NUMQ.length)];tbCur=nq;
     items=nq.o.map(function(o,i){return tbOption(esc(o),i===nq.a,"对应第 "+nq.kp+" 条「"+kpByNo(nq.kp)[2]+"」。");});
-    box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag blue">数字闪击</span><span class="tag">3 秒内锁定</span></div><div class="qtext">'+esc(nq.q)+'</div><div class="opts">'+items.map(function(o,i){return '<button class="opt" data-i="'+i+'"><span class="key">'+"ABCD"[i]+'</span><span>'+o.html+'</span></button>';}).join("")+'</div><div class="feedback" id="tbFb"></div></div>';
+    box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag blue">数字闪击</span><span class="tag">不限时 · 对准锚点</span></div><div class="qtext">'+esc(nq.q)+'</div><div class="opts">'+items.map(function(o,i){return '<button class="opt" data-i="'+i+'"><span class="key">'+"ABCD"[i]+'</span><span>'+o.html+'</span></button>';}).join("")+'</div><div class="feedback" id="tbFb"></div></div>';
+  }else if(tbMode==="set"){
+    var sq=SETQ[Math.floor(Math.random()*SETQ.length)];
+    var pairOpts=shuffle([{t:sq.good,r:true},{t:sq.bad,r:false}]);
+    items=pairOpts.map(function(o){return tbOption(esc(o.t),o.r,sq.why+" 对应第 "+sq.kp+" 条「"+kpByNo(sq.kp)[2]+"」。整组认领：下次该清单约5题后会再出现一次。");});
+    box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag blue">集合认领</span><span class="tag">第 '+sq.kp+' 条 · 整组判断</span></div><div class="qtext">'+esc(sq.prompt)+'</div><div class="opts">'+items.map(function(o,i){return '<button class="opt" data-i="'+i+'"><span class="key">'+"AB"[i]+'</span><span>'+o.html+'</span></button>';}).join("")+'</div><div class="feedback" id="tbFb"></div></div>';
   }else{
     var pq=PAIRQ[Math.floor(Math.random()*PAIRQ.length)];
     var opts=[pq.a,pq.b];if(Math.random()<0.5)opts=[pq.b,pq.a];
@@ -659,7 +774,9 @@ function nextTurbo(){
       box.querySelectorAll(".opt").forEach(function(x,xi){x.disabled=true;if(items[xi].right)x.classList.add("right");});
       if(!ok)b.classList.add("wrong");
       var fb=document.getElementById("tbFb");fb.className="feedback show "+(ok?"ok":"no");
-      fb.innerHTML="<b class='t'>"+(ok?"✓ 认对了":"✗ 认错了")+"</b>　"+esc(items.filter(function(x){return x.right;})[0].why)+'<div class="qnav"><button class="btn blue" onclick="nextTurbo()">下一道 →</button></div>';
+      var whyTxt=items.filter(function(x){return x.right;})[0].why;
+      var causal=ok?whyTxt:("为什么错："+whyTxt+" 你选的干扰项差就差在这一点上——记住这个区别，下次同类题先排掉它。该题已排入重学：约5题后重现、约20分钟/下一组再重现。");
+      fb.innerHTML="<b class='t'>"+(ok?"✓ 认对了":"✗ 认错了 · 进重学环")+"</b>　"+esc(causal)+'<div class="qnav"><button class="btn blue" onclick="nextTurbo()">下一道 →</button></div>';
       tbStat();saveProgress();
     });
   });
@@ -740,7 +857,7 @@ function answerPractice(q,correct,chosen){
   });
   var fb=document.getElementById("fb");fb.className="feedback show "+(correct?"ok":"no");
   var ansTxt=q.t==="judge"?("正确答案："+(q.a?"正确 √":"错误 ×")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
-  fb.innerHTML="<b class='t'>"+(correct?"✓ 答对了":"✗ 答错了")+"</b>　"+ansTxt+"<br>"+esc(q.e);
+  fb.innerHTML="<b class='t'>"+(correct?"✓ 答对了":"✗ 答错了 · 已进错题本和重学环")+"</b>　"+ansTxt+"<br>"+(correct?esc(q.e):("为什么错（因果提醒）："+esc(q.e)+" 记住干扰项错在哪一句，该知识点约5题后和下一块开头会再考你一次。"));
   var sb=document.getElementById("submitBtn");if(sb)sb.disabled=true;
 }
 renderTypeChips();buildPracticeList();renderPractice();
@@ -769,7 +886,7 @@ function renderExam(){
   document.getElementById("examSubmit").addEventListener("click",gradeExam);
 }
 function gradeExam(){
-  if(examDone)return;examDone=true;var score=0;
+  if(examDone)return;examDone=true;mockRounds++;saveProgress();refreshStats();var score=0;
   examQs.forEach(function(q,qi){
     var ok=false;
     if(q.t==="judge"){var r=document.querySelector('input[name="ex'+qi+'"]:checked');ok=!!r&&((+r.value===1)===q.a);}
@@ -781,7 +898,7 @@ function gradeExam(){
     var ansTxt=q.t==="judge"?("正确判断："+(q.a?"正确":"错误")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
     fb.innerHTML="<b class='t'>"+(ok?"✓ +5 分":"✗ 0 分")+"</b>　"+ansTxt+"<br>"+esc(q.e);
   });
-  var msg=score>=90?"识别速度已经很快了，考前再过一轮卡就行。":score>=70?"不错，错的几道回错题本把对应知识点再看一遍即可。":score>=60?"刚过线：先去板块①把错题对应的卡过到秒认。":"别急着刷卷：回板块①按模块过卡，再到板块②练成对辨认，混淆点清掉再测。";
+  var msg=score>=90?"识别速度已经很快了（本轮计入模拟 "+mockRounds+" / 3），考前再过一轮卡就行。":score>=70?"不错（模拟 "+mockRounds+" / 3），错的几道已进错题本，把对应知识点按因果提醒重学一遍即可。":score>=60?"刚过线（模拟 "+mockRounds+" / 3）：先去板块①把错题对应的卡过到秒认，再做下一轮。":"别急着刷卷（模拟 "+mockRounds+" / 3）：回板块①按模块过卡，再到板块②练成对辨认和集合认领，混淆点清掉再测。";
   document.getElementById("examResult").innerHTML='<div class="card" style="margin-top:16px;text-align:center"><div class="result-big">'+score+' <span style="font-size:20px">/ 100</span></div><p>'+msg+'</p><p style="margin-top:10px"><button class="btn amber" onclick="startExam()">再来一套</button> <button class="btn ghost" onclick="go(\'wrong\')">看错题本</button></p></div>';
 }
 renderExam();
@@ -818,7 +935,7 @@ refreshStats();
     if(timer)clearTimeout(timer);armed=false;
     try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
     KP.forEach(function(k){fam[k[0]]=0;});
-    state.done={};state.wrong={};state.essayDone={};
+    state.done={};state.wrong={};state.essayDone={};mockRounds=0;
     if(typeof tbDone==="number"){tbDone=0;tbOk=0;tbStat();}
     _restoredTb=null;
     refreshStats();renderKp();resetCurve();renderWrong();

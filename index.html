@@ -134,6 +134,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
         <span class="stat">认出 <b id="stKnown">0</b> / 65</span>
         <span class="stat">练手题对 <b id="stAcc">—</b></span>
         <span class="stat">错题 <b id="stWrong">0</b></span>
+        <span class="stat" id="saveHint">已开启本地保存</span>
       </div>
     </div>
     <div class="progress"><i id="progBar"></i></div>
@@ -258,7 +259,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div id="wrongBox"></div>
   </section>
 
-  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单（2.docx），共 65 条，已按新版编号更新。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条只有页码（p230）连标题都没有、第 64 条是计算题，两条如实留空待你补课本内容。本页所有进度只在本次打开期间有效。</div>
+  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单（2.docx），共 65 条，已按新版编号更新。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条只有页码（p230）连标题都没有、第 64 条是计算题，两条如实留空待你补课本内容。<br><br>本地保存：熟悉度、做题记录和错题本会自动保存到这台设备当前浏览器的本地存储里，关掉页面、刷新或关掉浏览器再打开，同一台设备、同一个浏览器里进度还在；换设备、换浏览器或清除浏览器数据则不会同步，也会丢失。<p style="margin-top:10px"><button class="btn ghost" id="clearSaveBtn" type="button">清除本地保存的进度</button> <span id="clearHint"></span></p></div>
 </div>
 
 <script>
@@ -462,10 +463,37 @@ var PAIRQ=[
 </script>
 
 <script>
-/* ============ 状态（仅本次会话） ============ */
+/* ============ 状态（本地保存，关掉不丢） ============ */
+var STORAGE_KEY="traffic-safety-learning-v1";
+var _restoredTb=null;
 var state={done:{},wrong:{},essayDone:{}};
 var fam={}; /* 知识点熟悉度 0未见 1眼熟 2秒认 */
 KP.forEach(function(k){fam[k[0]]=0;});
+function saveProgress(){
+  try{
+    var td=(typeof tbDone==="number")?tbDone:(_restoredTb?_restoredTb.done:0);
+    var to=(typeof tbOk==="number")?tbOk:(_restoredTb?_restoredTb.ok:0);
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({fam:fam,done:state.done,wrong:state.wrong,essayDone:state.essayDone,tbDone:td,tbOk:to,savedAt:Date.now()}));
+    var el=document.getElementById("saveHint");
+    if(el)el.textContent="已保存到本机";
+  }catch(e){}
+}
+function loadProgress(){
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw)return;
+    var data=JSON.parse(raw);
+    if(!data)return;
+    if(data.fam)KP.forEach(function(k){var v=data.fam[k[0]];if(v===0||v===1||v===2)fam[k[0]]=v;});
+    if(data.done)state.done=data.done;
+    if(data.wrong)state.wrong=data.wrong;
+    if(data.essayDone)state.essayDone=data.essayDone;
+    if(typeof data.tbDone==="number"||typeof data.tbOk==="number")_restoredTb={done:data.tbDone||0,ok:data.tbOk||0};
+    var el=document.getElementById("saveHint");
+    if(el)el.textContent="已恢复上次进度 · 已保存到本机";
+  }catch(e){}
+}
+loadProgress();
 function kpByNo(n){for(var i=0;i<KP.length;i++)if(KP[i][0]===n)return KP[i];return null;}
 function refreshStats(){
   var known=KP.filter(function(k){return fam[k[0]]===2;}).length;
@@ -478,9 +506,9 @@ function refreshStats(){
   document.getElementById("progBar").style.width=Math.round(known/65*100)+"%";
 }
 function record(q,correct){
-  if(q.t==="essay"){state.essayDone[q.id]=true; if(!correct)state.wrong[q.id]=true;}
+  if(q.t==="essay"){state.essayDone[q.id]=true; if(!correct)state.wrong[q.id]=true; else delete state.wrong[q.id];}
   else{state.done[q.id]=correct; if(correct){delete state.wrong[q.id];}else{state.wrong[q.id]=true;}}
-  refreshStats();
+  refreshStats();saveProgress();
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
@@ -586,9 +614,9 @@ function renderCard(){
   }else{
     var body=(k[3]?'<div class="kp-body" style="text-align:left">'+esc(k[3])+'</div>':"")+(k[4]?'<div class="ai-box" style="text-align:left"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>':"")+(k[5]?'<div class="mn-box" style="text-align:left"><span class="mn-tag">助记 · </span><span class="mn-text">'+esc(k[5])+'</span>'+diagram(k[6])+'</div>':"");
     box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag amber">第 '+k[0]+' 条</span><span class="tag">'+MODULES[k[1]]+'</span></div><div class="qtext" style="text-align:left">'+esc(k[2])+'</div>'+body+'<div class="rateRow"><button class="r-no" id="rateNo">忘了<small>立刻回炉 · 本轮重来</small></button><button class="r-mid" id="rateMid">眼熟<small>下一轮再见</small></button><button class="r-yes" id="rateYes">秒认<small>间隔拉长 · 靠后排</small></button></div></div>';
-    document.getElementById("rateNo").addEventListener("click",function(){fam[k[0]]=0;cvCount.slow++;cvQueue.splice(Math.min(3,cvQueue.length),0,k);refreshStats();nextCard();});
-    document.getElementById("rateMid").addEventListener("click",function(){if(fam[k[0]]<1)fam[k[0]]=1;cvCount.mid++;cvQueue.push(k);refreshStats();nextCard();});
-    document.getElementById("rateYes").addEventListener("click",function(){fam[k[0]]=2;cvCount.fast++;refreshStats();nextCard();});
+    document.getElementById("rateNo").addEventListener("click",function(){fam[k[0]]=0;cvCount.slow++;cvQueue.splice(Math.min(3,cvQueue.length),0,k);refreshStats();saveProgress();nextCard();});
+    document.getElementById("rateMid").addEventListener("click",function(){if(fam[k[0]]<1)fam[k[0]]=1;cvCount.mid++;cvQueue.push(k);refreshStats();saveProgress();nextCard();});
+    document.getElementById("rateYes").addEventListener("click",function(){fam[k[0]]=2;cvCount.fast++;refreshStats();saveProgress();nextCard();});
   }
 }
 document.getElementById("cvRestart").addEventListener("click",resetCurve);
@@ -596,6 +624,7 @@ renderCurveChips();resetCurve();
 
 /* ============ 板块② 科研速通 ============ */
 var tbMode="kw",tbDone=0,tbOk=0,tbCur=null,tbAnswered=false;
+if(_restoredTb){tbDone=_restoredTb.done;tbOk=_restoredTb.ok;}
 var TBINTRO={
 kw:"<h3>关键词认领 · 提取练习 + 组块</h3><p>只给<b>关键词组合</b>，从 4 个知识点标题里认出它属于哪一条。选择题的本质就是这个动作：题干给线索，你认领答案。不看正文、不默写，<b>认得快就是会</b>。</p>",
 num:"<h3>数字闪击 · 数字组块</h3><p>考试里的数字题靠<b>锚点</b>不靠计算：30/10/3/1、20/80、5主动4被动……每道只问一个数，和它的干扰项放一起，逼自己在 3 秒内锁定。</p>",
@@ -631,7 +660,7 @@ function nextTurbo(){
       if(!ok)b.classList.add("wrong");
       var fb=document.getElementById("tbFb");fb.className="feedback show "+(ok?"ok":"no");
       fb.innerHTML="<b class='t'>"+(ok?"✓ 认对了":"✗ 认错了")+"</b>　"+esc(items.filter(function(x){return x.right;})[0].why)+'<div class="qnav"><button class="btn blue" onclick="nextTurbo()">下一道 →</button></div>';
-      tbStat();
+      tbStat();saveProgress();
     });
   });
 }
@@ -771,6 +800,33 @@ function retryQ(id){var q=Q[id];pType="all";pMod=-1;renderTypeChips();buildPract
 function knowJump(n){kpMod=-1;renderKpChips();document.getElementById("kpSearch").value=kpByNo(n)[2].slice(0,4);renderKp();go("know");}
 setInterval(function(){if(document.getElementById("view-wrong").classList.contains("on"))renderWrong();},600);
 refreshStats();
+/* 清除本地保存 + 关页面前再存一次 */
+(function(){
+  window.addEventListener("pagehide",saveProgress);
+  document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")saveProgress();});
+  var btn=document.getElementById("clearSaveBtn");
+  if(!btn)return;
+  var armed=false,timer=null;
+  btn.addEventListener("click",function(){
+    var hint=document.getElementById("clearHint");
+    if(!armed){
+      armed=true;btn.textContent="再点一次，确认清除全部进度";
+      if(hint)hint.textContent="将清空熟悉度、做题记录和错题本";
+      timer=setTimeout(function(){armed=false;btn.textContent="清除本地保存的进度";if(hint)hint.textContent="";},4000);
+      return;
+    }
+    if(timer)clearTimeout(timer);armed=false;
+    try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+    KP.forEach(function(k){fam[k[0]]=0;});
+    state.done={};state.wrong={};state.essayDone={};
+    if(typeof tbDone==="number"){tbDone=0;tbOk=0;tbStat();}
+    _restoredTb=null;
+    refreshStats();renderKp();resetCurve();renderWrong();
+    btn.textContent="清除本地保存的进度";
+    if(hint)hint.textContent="已清除";
+    var sh=document.getElementById("saveHint");if(sh)sh.textContent="已开启本地保存";
+  });
+})();
 </script>
 </body>
 </html>

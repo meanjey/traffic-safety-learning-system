@@ -94,6 +94,15 @@ button{font-family:inherit;cursor:pointer}
 .opt.wrong{border-color:var(--red);background:var(--red-bg)}
 .opt:disabled{cursor:default;opacity:1}
 .fillin{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-size:16px;margin-top:16px}
+.fill-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media(max-width:560px){.fill-grid{grid-template-columns:1fr}}
+.fill-item{display:block}
+.fill-item span{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.fill-item .fillin{margin-top:0}
+.fill-note{font-size:13px;color:var(--muted);margin:10px 0 0}
+.mn-details{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px}
+.mn-details summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;width:max-content;max-width:100%}
+.mn-details .mn-box{margin-top:8px;border-top:none;padding-top:0}
 textarea.fillin{min-height:110px;font-size:15px;line-height:1.6;resize:vertical}
 .feedback{margin-top:16px;border-radius:12px;padding:14px 16px;font-size:14px;display:none}
 .feedback.show{display:block}
@@ -155,6 +164,8 @@ ul.tight{margin:6px 0 0;padding-left:20px}
 @media(max-width:560px){.cycle-score{grid-template-columns:1fr}}
 .cycle-score div{background:var(--surface2);border-radius:12px;padding:12px}
 .cycle-score b{font-size:24px;display:block;font-family:"Noto Serif SC",serif}
+.visit-counter{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px;color:var(--muted)}
+.visit-counter b{color:var(--ink);font-family:"Noto Serif SC",serif;font-size:16px;margin:0 2px}
 </style>
 </head>
 <body>
@@ -221,7 +232,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
       <div class="card">
         <div class="modnum">板块 ① · Day 1 主场</div>
         <h3>记忆曲线 · 熟悉知识点（全覆盖编码）</h3>
-        <p>Day 1 用它把 65 条按模块<b>全覆盖</b>过完：先看标题+关键词主动猜，再翻卡对照，只分三档——秒认 / 眼熟 / 忘了。间隔已压缩为两天版：<b>学后约10分钟闪回 → 当天2–4小时后睡前复过 → 隔夜10–16小时 Day 2 提取 → 考前早上唤醒</b>。忘了的卡进错后重学环：约5张卡后重现、约20分钟后再重现。</p>
+        <p>Day 1 用它把 65 条按模块<b>全覆盖</b>过完：卡片正面只给标题、不给任何提示，先在心里把要点完整说一遍再翻卡对照，只分三档——秒认 / 眼熟 / 忘了。间隔已压缩为两天版：<b>学后约10分钟闪回 → 当天2–4小时后睡前复过 → 隔夜10–16小时 Day 2 提取 → 考前早上唤醒</b>。忘了的卡进错后重学环：约5张卡后重现、约20分钟后再重现。</p>
         <p style="margin-top:10px"><button class="btn amber" onclick="go('curve')">开始过卡 →</button></p>
       </div>
       <div class="card">
@@ -235,7 +246,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div class="card" style="margin-top:14px;border:2px solid var(--amber)">
         <div class="modnum">新板块 ③ · 做题带动记忆</div>
         <h3>以题带学 · 全量练 → 只学薄弱点 → 只练薄弱点 · 循环清零</h3>
-        <p>先把<b>所有知识点对应的客观题一次练完</b>，系统按知识点算出你真正的薄弱点（答对的不再浪费时间）；然后只针对薄弱点学——每条按「先认关键词 → 看考试锚点和你错在哪 → 认干扰项」三步快速识别，不默写、不抄书；学完只复练薄弱点的题，<b>还有错就自动回到学习那一步再循环</b>，直到薄弱点清零为止。</p>
+        <p>先把<b>所有知识点对应的客观题一次练完</b>，系统按知识点算出你真正的薄弱点（答对的不再浪费时间）；然后只针对薄弱点学——每条先只看标题回忆（不给提示），翻开后对照原文、再看你刚才错在哪，不默写、不抄书；学完只复练薄弱点的题，<b>还有错就自动回到学习那一步再循环</b>，直到薄弱点清零为止。</p>
         <p style="margin-top:10px"><button class="btn amber" onclick="go('cycle')">开始全量摸底 →</button> <span class="stat">已清零轮次 <b id="cycleRoundsHome">0</b></span> <span class="stat">当前薄弱点 <b id="cycleWeakHome">—</b></span></p>
       </div>
 
@@ -273,7 +284,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
   <section class="view" id="view-curve">
     <div class="card" style="margin-bottom:14px">
       <h3>怎么过卡 · 两天版规则（30 秒看完）</h3>
-      <p>① 卡片先只露<b>标题 + 关键词</b>，先在心里主动提取再翻卡，不许先看正文；② 翻开对照（助记只在正文下方小字，没记住时再看）；③ 按真实反应点档：<b>忘了</b>=进错后重学环（约5张卡/2分钟后重现 + 约20分钟/下一块再重现），<b>眼熟</b>=本块末尾再见，<b>秒认</b>=推到 Day 2 提取池。Day 1 目标是全覆盖编码，Day 2 同一批卡打乱做延迟提取。</p>
+      <p>① 卡片正面<b>只露标题</b>，不给关键词、不给任何提示，先在心里把要点完整说一遍再翻卡，不许先看正文；② 翻开只对照正文（助记默认折叠，想不起来再点开）；③ 按真实反应点档：<b>忘了</b>=进错后重学环（约5张卡/2分钟后重现 + 约20分钟/下一块再重现），<b>眼熟</b>=本块末尾再见，<b>秒认</b>=推到 Day 2 提取池。Day 1 目标是全覆盖编码，Day 2 同一批卡打乱做延迟提取。</p>
       <div class="ladder" id="ladderRow"></div>
       <p style="font-size:13px">两天间隔阶梯：学后约10分钟闪回 → 当天2–4小时后睡前复过 → 隔夜10–16小时 Day 2 晨起提取 → 11月10日考前早上只扫错题与锚点。每过25分钟停5分钟，系统按剩余卡数估算 ETA，避免一口气刷到工作记忆过载。</p>
     </div>
@@ -312,10 +323,10 @@ ul.tight{margin:6px 0 0;padding-left:20px}
   <section class="view" id="view-cycle">
     <div class="card" style="margin-bottom:14px">
       <h3>以题带学 · 练—学—练，循环到薄弱点清零</h3>
-      <p style="font-size:14px;color:var(--muted)">适合两天速成、选择题为主的打法，不平均用力：<b style="color:var(--ink)">① 全量摸底</b>把每个知识点对应的客观题（判断/单选/多选/填空，解答题不计入判定）都练一遍，只报对错、不看解析，按知识点算薄弱点；<b style="color:var(--ink)">② 只学薄弱点</b>，每条用识别学法三步：先凭关键词猜 → 翻开看考试锚点＋「你刚才错在哪」→ 认清干扰项长什么样，清单题整组认、易混题成对辨；<b style="color:var(--ink)">③ 只练薄弱点</b>，优先换同知识点的新题、没有新题时用关键词/数字/集合认领题换个问法再测，并带解析。<b style="color:var(--ink)">复练还有错 → 自动回到 ② 只学剩下的薄弱点 → 再练，直到清零。</b>进度自动存本机，中途关掉再打开能接着走；摸底可以分几次做完，不用一口气。</p>
+      <p style="font-size:14px;color:var(--muted)">适合两天速成、选择题为主的打法，不平均用力：<b style="color:var(--ink)">① 全量摸底</b>把每个知识点对应的客观题（判断/单选/多选/填空，解答题不计入判定）都练一遍，只报对错、不看解析，按知识点算薄弱点；<b style="color:var(--ink)">② 只学薄弱点</b>，每条只看标题先回忆（错题翻开前只给题干、不给解析）→ 翻开对照原文＋「你刚才错在哪」，清单题整组认、易混题成对辨；<b style="color:var(--ink)">③ 只练薄弱点</b>，优先换同知识点的新题、没有新题时用关键词/数字/集合认领题换个问法再测，并带解析。<b style="color:var(--ink)">复练还有错 → 自动回到 ② 只学剩下的薄弱点 → 再练，直到清零。</b>进度自动存本机，中途关掉再打开能接着走；摸底可以分几次做完，不用一口气。</p>
       <div class="cycle-steps" id="cycleSteps">
         <div class="cycle-step" data-cs="diag"><b>① 全量练 · 测薄弱点</b><p>所有知识点对应的客观题逐题练完，不会就猜，只看对错不看解析。</p></div>
-        <div class="cycle-step" data-cs="learn"><b>② 只学薄弱点 · 识别学法</b><p>关键词先猜 → 锚点＋错因 → 认干扰项。数字/清单整组认，易混成对辨。</p></div>
+        <div class="cycle-step" data-cs="learn"><b>② 只学薄弱点 · 识别学法</b><p>只看标题先回忆 → 翻开对照原文＋错因。数字/清单整组认，易混成对辨。</p></div>
         <div class="cycle-step" data-cs="retest"><b>③ 只练薄弱点 · 换题复练</b><p>新题优先、换问法兜底，带解析。还有错就 ↺ 回到 ②，直到薄弱点 = 0。</p></div>
       </div>
       <div class="toolbar" style="margin-bottom:0">
@@ -335,13 +346,13 @@ ul.tight{margin:6px 0 0;padding-left:20px}
       <input type="search" id="kpSearch" placeholder="搜索知识点，如：视距 / 醉驾 / 博得 / 护栏…">
     </div>
     <div class="toolbar" id="kpMods"></div>
-    <p style="font-size:13px;color:var(--muted);margin:0 0 12px">大字正文 = 知识点本身，先看它；<b style="color:var(--amber)">黄色虚线框</b> = 原文只有页码/标题、按通用教材补的内容，已标注「AI补充，请以课本为准」，和原文分开显示；正文下方的小字是助记（画面/口诀/示意图），只是辅助，没记住时再扫一眼。第 48 条原文仍只有页码（p132），正文暂缺、只有下方补充框；第 64 条评价指标与三个率的公式已按新版清单原文补入正文。</p>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 12px">大字正文 = 知识点本身，先看它；<b style="color:var(--amber)">黄色虚线框</b> = 原文只有页码/标题、按通用教材补的内容，已标注「AI补充，请以课本为准」，和原文分开显示；助记（画面/口诀）默认折叠在每条正文下方，想不起来再点开；示意图直接显示。第 48 条原文仍只有页码（p132），正文暂缺、只有下方补充框；第 64 条评价指标与三个率的公式已按新版清单原文补入正文。</p>
     <div id="kpList"></div>
   </section>
 
   <!-- 练手题 -->
   <section class="view" id="view-practice">
-    <div class="card" style="margin-bottom:14px"><h3>练手题 · 只为辅助记忆</h3><p>考试怎么出题未知，这里的题<b>不押题</b>，只帮你把 65 条过一遍手感：覆盖到、能回忆起关键词即可，不用追求刷完、更不用追求满分。判断 / 单选 / 多选 / 填空 / 解答五种形式都在，解答题看参考答案自评就行。<b>全部题型不给任何提示</b>：填空凭记忆填写，单选、多选的干扰项都换成了相近数字、相近概念和容易搞反的成对概念（割集/径集、事件树/事故树、应急处置/应急处理、不足转向/过多转向这类），不能再靠排除明显错误项蒙对，提交后才看答案。<b>每道题答完后，不管对错，下方都会展开对应的原知识点</b>，方便你对照原文、助记和示意图再认一遍。</p></div>
+    <div class="card" style="margin-bottom:14px"><h3>练手题 · 只为辅助记忆</h3><p>考试怎么出题未知，这里的题<b>不押题</b>，只帮你把 65 条过一遍手感：覆盖到、能回忆起关键词即可，不用追求刷完、更不用追求满分。判断 / 单选 / 多选 / 填空 / 解答五种形式都在，解答题看参考答案自评就行。<b>全部题型不给任何提示</b>：填空逐空填写、每空必须写完整全称（如「静视力」不能只写「静」、「暂扣机动车驾驶证」不能只写「暂扣」），漏空、少字、顺序错都算错；单选、多选的干扰项都换成了相近数字、相近概念和容易搞反的成对概念（割集/径集、事件树/事故树、应急处置/应急处理、不足转向/过多转向这类），不能再靠排除明显错误项蒙对，提交后才看答案。<b>每道题答完后，不管对错，下方都会展开对应的原知识点</b>，方便你对照原文再认一遍（助记默认折叠）。</p></div>
     <div class="toolbar" id="typeChips"></div>
     <div class="toolbar" id="modChips"></div>
     <div id="practiceBox"></div>
@@ -353,7 +364,7 @@ ul.tight{margin:6px 0 0;padding-left:20px}
     <div id="wrongBox"></div>
   </section>
 
-  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单，共 65 条；新版清单为 64 条（事件树与事故树合并为一条），新增内容已按知识点内容对应并入，系统原有内容未删。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条已按课本 p229 补入应急预案体系与预警等级；第 64 条评价指标与三个率的公式已按新版清单原文补入；第 48 条（p132）原文仍只有页码，正文暂缺。<br><br>本地保存：熟悉度、做题记录和错题本会自动保存到这台设备当前浏览器的本地存储里，关掉页面、刷新或关掉浏览器再打开，同一台设备、同一个浏览器里进度还在；换设备、换浏览器或清除浏览器数据则不会同步，也会丢失。<p style="margin-top:10px"><button class="btn ghost" id="clearSaveBtn" type="button">清除本地保存的进度</button> <span id="clearHint"></span></p></div>
+  <div class="foot">数据来源：你提供的《道路交通安全工程》知识点清单，共 65 条；新版清单为 64 条（事件树与事故树合并为一条），新增内容已按知识点内容对应并入，系统原有内容未删。其中原文只有页码或标题的条目，补充内容均单独放在黄色框内并标注「AI补充，请以课本为准」；第 57 条已按课本 p229 补入应急预案体系与预警等级；第 64 条评价指标与三个率的公式已按新版清单原文补入；第 48 条（p132）原文仍只有页码，正文暂缺。<br><br>本地保存：熟悉度、做题记录和错题本会自动保存到这台设备当前浏览器的本地存储里，关掉页面、刷新或关掉浏览器再打开，同一台设备、同一个浏览器里进度还在；换设备、换浏览器或清除浏览器数据则不会同步，也会丢失。<p style="margin-top:10px"><button class="btn ghost" id="clearSaveBtn" type="button">清除本地保存的进度</button> <span id="clearHint"></span></p><div class="visit-counter" id="visitCounter" hidden>总访问量 <b id="visitCount">—</b> 次</div></div>
 </div>
 
 <script>
@@ -484,16 +495,16 @@ var Q=[
 {t:"multi",m:4,kp:56,q:"道路交通运输突发事件应急管理包括（ ）",o:["监测与预警","应急处置","应急准备","应急处理"],a:[0,1,2],e:"应急管理四过程：应急准备、监测与预警、应急处置、终止与善后。「应急处理」不是课本说法、也不是其中一环——课本用的是应急处置，处置和处理别搞混。见知识点 56。"},
 {t:"multi",m:4,kp:62,q:"事故车辆行驶速度再现分析的基本方法包括（ ）",o:["模拟试验分析法","能量分析法","目测估计法","动量分析法"],a:[0,1,3],e:"再现7方法：能量、动量、运动学及动力学、经验公式、能量吸收分布图、模拟试验、计算机仿真。见知识点 62。"},
 {t:"fill",m:0,kp:3,q:"死亡事故四档的死亡人数下限依次为：特别重大 ____ 人、重大 ____ 人、较大 ____ 人、一般 ____ 人。",a:["30","10","3","1"],e:"30 / 10 / 3 / 1，均为下限（含本数）。见知识点 3。"},
-{t:"fill",m:0,kp:21,q:"3E 原则的三个中文词依次是：____、____、____。",a:["工程","教育","执法"],e:"工程（Engineering）、教育（Education）、执法（Enforcement）。见知识点 21。"},
-{t:"fill",m:0,kp:16,q:"海因里希 5 因素依次是：____ → ____ → ____ → ____ → ____。",a:["遗传","缺点","不安全","事故","伤害"],e:"完整顺序：遗传及社会环境 → 人的缺点 → 人的不安全行为或物的不安全状态 → 事故 → 伤害。见知识点 16。"},
-{t:"fill",m:1,kp:22,q:"视力分为三种：____、____、____。",a:["静","动","夜间"],e:"静视力、动视力、夜间视力。见知识点 22。"},
+{t:"fill",m:0,kp:21,q:"3E 原则的三个中文词依次是：____、____、____。",a:["工程技术","教育","执法"],e:"工程技术（Engineering）、教育（Education）、执法（Enforcement）。第一个空要写全「工程技术」，只写「工程」不算完整。见知识点 21。"},
+{t:"fill",m:0,kp:16,q:"海因里希 5 因素依次是：____ → ____ → ____ → ____ → ____。",a:["遗传及社会环境","人的缺点","人的不安全行为或物的不安全状态","事故","伤害"],alts:[null,null,["人的不安全行为或者物的不安全状态"],null,null],e:"完整顺序：遗传及社会环境 → 人的缺点 → 人的不安全行为或物的不安全状态 → 事故 → 伤害。每个空都要写全称，只写「遗传」「不安全」不算完整。见知识点 16。"},
+{t:"fill",m:1,kp:22,q:"视力分为三种：____、____、____。",a:["静视力","动视力","夜间视力"],e:"静视力、动视力、夜间视力。每个空写全称，只写「静」「动」不算完整。见知识点 22。"},
 {t:"fill",m:1,kp:29,q:"饮酒驾驶指血液酒精浓度 ≥ ____ mg/100ml 且 < ____ mg/100ml；≥ ____ 即为醉驾。",a:["20","80","80"],e:"见知识点 29。"},
-{t:"fill",m:2,kp:31,q:"汽车制动性能的评价指标是：____、____、____。",a:["效能","恒定","方向"],e:"制动效能、制动效能的恒定性、制动时方向的稳定性。见知识点 31。"},
-{t:"fill",m:3,kp:37,q:"道路几何线形由三种线形组合而成：____、____、____。",a:["直线","圆曲线","缓和"],e:"直线、圆曲线、缓和曲线。见知识点 37。"},
+{t:"fill",m:2,kp:31,q:"汽车制动性能的评价指标是：____、____、____。",a:["制动效能","制动效能的恒定性","制动时方向的稳定性"],e:"制动效能、制动效能的恒定性、制动时方向的稳定性。三个空都要写完整名称，只写「效能」「恒定」「方向」不算完整。见知识点 31。"},
+{t:"fill",m:3,kp:37,q:"道路几何线形由三种线形组合而成：____、____、____。",a:["直线","圆曲线","缓和曲线"],e:"直线、圆曲线、缓和曲线。第三个空要写全「缓和曲线」。见知识点 37。"},
 {t:"fill",m:3,kp:39,q:"超高是把弯道____侧路面抬高、____侧降低，做成向____倾斜的单向横坡。",a:["外","内","圆心"],e:"外侧抬高、内侧降低，向圆心倾斜。见知识点 39。"},
-{t:"fill",m:3,kp:42,q:"视距分为四种：____、____、____、____。",a:["停车","会车","超车","错车"],e:"停车、会车、超车、错车。见知识点 42。"},
-{t:"fill",m:4,kp:59,q:"交通事故责任划分共 5 种：____、____、____、____、____。",a:["全部","主要","同等","次要","无"],e:"全部责任、主要责任、同等责任、次要责任、无责任。见知识点 59。"},
-{t:"fill",m:4,kp:60,q:"行政处罚五种是：____、____、____、____、____。",a:["警告","罚款","暂扣","吊销","拘留"],e:"五种：警告、罚款、暂扣、吊销、拘留（课本 p240）。见知识点 60。"},
+{t:"fill",m:3,kp:42,q:"视距分为四种：____、____、____、____。",a:["停车视距","会车视距","超车视距","错车视距"],e:"停车视距、会车视距、超车视距、错车视距。每个空带上「视距」写全，只写「停车」不算完整。见知识点 42。"},
+{t:"fill",m:4,kp:59,q:"交通事故责任划分共 5 种：____、____、____、____、____。",a:["全部责任","主要责任","同等责任","次要责任","无责任"],e:"全部责任、主要责任、同等责任、次要责任、无责任。每个空带上「责任」写全，只写「全部」「无」不算完整。见知识点 59。"},
+{t:"fill",m:4,kp:60,q:"行政处罚五种是：____、____、____、____、____。",a:["警告","罚款","暂扣机动车驾驶证","吊销机动车驾驶证","拘留"],alts:[null,null,["暂扣驾驶证"],["吊销驾驶证"],null],e:"五种：警告、罚款、暂扣机动车驾驶证、吊销机动车驾驶证、拘留（课本 p240）。暂扣、吊销两个空要写全对象，只写「暂扣」「吊销」不算完整。见知识点 60。"},
 {t:"essay",m:0,kp:9,q:"比较事件树分析与事故树分析的方向和用途。",ref:"事件树（ETA）：归纳法，从一个初始事件出发、从前往后，按各道屏障成功/失败分支，推导所有可能后果。\n事故树（FTA）：演绎法，从结果到原因，以顶上事件为根，用有向逻辑树向下追溯基本原因。\n一句话：事件树往前推后果，事故树往后找原因。",e:"对比题答法：方向相反是核心，各说清起点和终点即可。"},
 {t:"essay",m:0,kp:11,q:"比较割集与径集的含义。",ref:"割集（截止集/截集）：导致顶上事件发生的基本事件的集合——集合内事件都发生，顶上事件必然发生，反映「怎样出事」。\n径集（通集）：某些基本事件不发生则顶上事件不发生的集合——反映「怎样不出事」。",e:"先各下定义，再点一句作用方向相反。"},
 {t:"essay",m:0,kp:15,q:"简述道路环境可靠性的四方面表现，并各用一句话说明。",ref:"（1）诱导性：形成据以确定前进方向的空间走廊，线形有序向前延伸；（2）容错性：给意外运动状态的车辆提供宽容、安全的路况，冲出路外也不致较大伤害；（3）适应性：纵坡、平整度适应车辆动力性能，标志、照明、视距满足行驶要求；（4）协调性：线形各元素取值相匹配，沿线车速无大的突变。",e:"四词是骨架：诱导、容错、适应、协调，每个再补一句。"},
@@ -689,6 +700,30 @@ function record(q,correct){
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+/* 填空：逐空填写、逐空判分。每空必须写完整全称（只去空格和标点后逐字相等），漏空、少字、错序都算错 */
+function normFill(s){return String(s||"").trim().toLowerCase().replace(/[\s，。、；：·,.;:！!？?（）()\[\]「」『』"']/g,"");}
+function fillInputsHTML(q,prefix,disabled){
+  return '<div class="fill-grid">'+q.a.map(function(_,i){return '<label class="fill-item"><span>第 '+(i+1)+' 空</span><input class="fillin" id="'+prefix+i+'" type="text" placeholder="填完整答案" autocomplete="off"'+(disabled?" disabled":"")+'></label>';}).join("")+'</div><p class="fill-note">填空无提示 · 每个空都要填完整全称，漏空、少字、顺序错都算错</p>';
+}
+function fillCheck(q,prefix){
+  for(var i=0;i<q.a.length;i++){
+    var el=document.getElementById(prefix+i);if(!el)return false;
+    var v=normFill(el.value);if(!v)return false;
+    var acc=[normFill(q.a[i])];
+    if(q.alts&&q.alts[i])q.alts[i].forEach(function(x){acc.push(normFill(x));});
+    if(acc.indexOf(v)<0)return false;
+  }
+  return true;
+}
+function fillAnyFilled(q,prefix){
+  for(var i=0;i<q.a.length;i++){var el=document.getElementById(prefix+i);if(el&&el.value.trim())return true;}
+  return false;
+}
+/* 助记默认折叠：学习卡上不再直接摊开提示，想不起来再点开；示意图仍直接显示 */
+function mnHTML(k,align){
+  if(!k[5])return diagram(k[6]);
+  return '<details class="mn-details"><summary>助记 · 想不起来再点开</summary><div class="mn-box"'+(align?' style="text-align:left"':"")+'><span class="mn-text">'+esc(k[5])+'</span></div></details>'+diagram(k[6]);
+}
 
 /* ============ 导航 ============ */
 function go(v){
@@ -737,7 +772,7 @@ function kpCard(k){
   if(k[3])h+='<div class="kp-body">'+esc(k[3])+'</div>';
   if(k[4])h+='<div class="ai-box"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>';
   if(pending)h+='<div class="kp-body">这一条暂无内容：清单里只有页码、没有正文，等你发那一页再补。</div>';
-  if(k[5])h+='<div class="mn-box"><span class="mn-tag">助记 · </span><span class="mn-text">'+esc(k[5])+'</span>'+diagram(k[6])+'</div>';
+  h+=mnHTML(k);
   return h+"</div>";
 }
 function kpRevealHTML(n){
@@ -784,11 +819,7 @@ function curveStats(){
 function nextCard(){
   cvCur=cvQueue.shift()||null;cvFlipped=false;curveStats();renderCard();
 }
-function kwOf(k){
-  var src=k[3]||k[4]||"";
-  var parts=src.split("；")[0].split("：");
-  return parts.length>1?parts.slice(1).join("：").slice(0,42):src.slice(0,42);
-}
+
 function renderCard(){
   var box=document.getElementById("curveBox");
   if(!cvCur){
@@ -796,10 +827,10 @@ function renderCard(){
   }
   var k=cvCur;
   if(!cvFlipped){
-    box.innerHTML='<div class="qcard flash" id="flashCard"><div class="qmeta" style="justify-content:center"><span class="tag amber">第 '+k[0]+' 条</span><span class="tag">'+MODULES[k[1]]+'</span><span class="tag blue">先认，别急着翻</span></div><div class="big">'+esc(k[2])+'</div><p style="color:var(--muted);margin:10px 0 0">关键词：<span class="kw">'+esc(kwOf(k))+'…</span></p><p style="color:var(--muted);font-size:13px;margin-top:14px">心里有答案了？点卡片翻开对照 ↓</p></div>';
+    box.innerHTML='<div class="qcard flash" id="flashCard"><div class="qmeta" style="justify-content:center"><span class="tag amber">第 '+k[0]+' 条</span><span class="tag">'+MODULES[k[1]]+'</span></div><div class="big">'+esc(k[2])+'</div><p style="color:var(--muted);font-size:13px;margin-top:14px">正面只有标题，不给关键词、不给提示。先在心里把要点完整说一遍，再点卡片翻开对照 ↓</p></div>';
     document.getElementById("flashCard").addEventListener("click",function(){cvFlipped=true;renderCard();});
   }else{
-    var body=(k[3]?'<div class="kp-body" style="text-align:left">'+esc(k[3])+'</div>':"")+(k[4]?'<div class="ai-box" style="text-align:left"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>':"")+(k[5]?'<div class="mn-box" style="text-align:left"><span class="mn-tag">助记 · </span><span class="mn-text">'+esc(k[5])+'</span>'+diagram(k[6])+'</div>':"");
+    var body=(k[3]?'<div class="kp-body" style="text-align:left">'+esc(k[3])+'</div>':"")+(k[4]?'<div class="ai-box" style="text-align:left"><span class="ai-tag">AI补充 · 请以课本为准</span>\n'+esc(k[4])+'</div>':"")+mnHTML(k,"left");
     box.innerHTML='<div class="qcard"><div class="qmeta"><span class="tag amber">第 '+k[0]+' 条</span><span class="tag">'+MODULES[k[1]]+'</span></div><div class="qtext" style="text-align:left">'+esc(k[2])+'</div>'+body+'<div class="rateRow"><button class="r-no" id="rateNo">忘了<small>立刻回炉 · 本轮重来</small></button><button class="r-mid" id="rateMid">眼熟<small>下一轮再见</small></button><button class="r-yes" id="rateYes">秒认<small>间隔拉长 · 靠后排</small></button></div></div>';
     document.getElementById("rateNo").addEventListener("click",function(){fam[k[0]]=0;cvCount.slow++;/* 错后重学环：约5张卡/2分钟后重现 + 约20分钟/下一块再重现 */cvQueue.splice(Math.min(5,cvQueue.length),0,k);if(cvQueue.length>12)cvQueue.splice(Math.min(16,cvQueue.length),0,k);refreshStats();saveProgress();nextCard();});
     document.getElementById("rateMid").addEventListener("click",function(){if(fam[k[0]]<1)fam[k[0]]=1;cvCount.mid++;/* 眼熟：本块末尾再见，相当于约20分钟后第二触点 */cvQueue.push(k);refreshStats();saveProgress();nextCard();});
@@ -902,8 +933,7 @@ function renderPractice(){
     h+='<div class="opts">'+q.o.map(function(o,i){return '<button class="opt" data-v="'+i+'"><span class="key">'+"ABCD"[i]+'</span><span>'+esc(o)+'</span></button>';}).join("")+"</div>";
     if(q.t==="multi")h+='<p style="font-size:13px;color:var(--muted)">多选题：可多选，选好后点「提交」。</p>';
   }else if(q.t==="fill"){
-    h+='<input class="fillin" id="fillIn" type="text" placeholder="把各空的答案依次写出来，用空格或顿号隔开" autocomplete="off">';
-    h+='<p style="font-size:13px;color:var(--muted)">填空题无提示 · 凭记忆填写</p>';
+    h+=fillInputsHTML(q,"fillIn");
   }else if(q.t==="essay"){h+='<textarea class="fillin" id="essayIn" placeholder="先在心里说一遍要点，再点「查看参考答案」对照自评（不用默写全文）"></textarea>';}
   h+='<div class="feedback" id="fb"></div><div id="kpReveal"></div><div class="qnav">';
   if(q.t==="multi"||q.t==="fill")h+='<button class="btn amber" id="submitBtn">提交答案</button>';
@@ -922,7 +952,7 @@ function renderPractice(){
   if(sb)sb.addEventListener("click",function(){
     if(pAnswered)return;
     if(q.t==="multi"){if(!pSel.length)return;answerPractice(q,pSel.slice().sort().join(",")===q.a.slice().sort().join(","));}
-    else{var val=document.getElementById("fillIn").value.trim().toLowerCase().replace(/\s+/g,"");if(!val)return;answerPractice(q,q.a.every(function(k){return val.indexOf(k.toLowerCase())>=0;}));}
+    else{if(!fillAnyFilled(q,"fillIn"))return;answerPractice(q,fillCheck(q,"fillIn"));}
   });
   var rb=document.getElementById("revealBtn");
   if(rb)rb.addEventListener("click",function(){
@@ -950,6 +980,7 @@ function answerPractice(q,correct,chosen){
   var ansTxt=q.t==="judge"?("正确答案："+(q.a?"正确 √":"错误 ×")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
   fb.innerHTML="<b class='t'>"+(correct?"✓ 答对了":"✗ 答错了 · 已进错题本和重学环")+"</b>　"+ansTxt+"<br>"+(correct?esc(q.e):("为什么错（因果提醒）："+esc(q.e)+" 记住干扰项错在哪一句，该知识点约5题后和下一块开头会再考你一次。"));
   var kr=document.getElementById("kpReveal");if(kr)kr.innerHTML=kpRevealHTML(q.kp);
+  box.querySelectorAll(".fillin").forEach(function(el){el.disabled=true;});
   var sb=document.getElementById("submitBtn");if(sb)sb.disabled=true;
 }
 renderTypeChips();buildPracticeList();renderPractice();
@@ -970,7 +1001,7 @@ function renderExam(){
     if(q.t==="judge")s+='<div class="opts"><label class="opt"><input type="radio" name="ex'+qi+'" value="1"> 正确</label><label class="opt"><input type="radio" name="ex'+qi+'" value="0"> 错误</label></div>';
     else if(q.t==="single")s+='<div class="opts">'+q.o.map(function(o,i){return '<label class="opt"><input type="radio" name="ex'+qi+'" value="'+i+'"> <span><b>'+"ABCD"[i]+'.</b> '+esc(o)+'</span></label>';}).join("")+"</div>";
     else if(q.t==="multi")s+='<div class="opts">'+q.o.map(function(o,i){return '<label class="opt"><input type="checkbox" name="ex'+qi+'" value="'+i+'"> <span><b>'+"ABCD"[i]+'.</b> '+esc(o)+'</span></label>';}).join("")+"</div>";
-    else if(q.t==="fill")s+='<input class="fillin" id="exfill'+qi+'" type="text" placeholder="填写答案（多个空用空格隔开）" autocomplete="off"><p style="font-size:13px;color:var(--muted)">填空题无提示 · 凭记忆填写</p>';
+    else if(q.t==="fill")s+=fillInputsHTML(q,"exfill"+qi+"_");
     return s+'<div class="feedback" id="exfb'+qi+'"></div><div id="exkp'+qi+'"></div></div>';
   }).join("");
   h+='<div class="qnav"><button class="btn amber" id="examSubmit">交卷看分</button><button class="btn ghost" onclick="examQs=null;renderExam()">收起</button></div><div id="examResult"></div>';
@@ -984,7 +1015,7 @@ function gradeExam(){
     if(q.t==="judge"){var r=document.querySelector('input[name="ex'+qi+'"]:checked');ok=!!r&&((+r.value===1)===q.a);}
     else if(q.t==="single"){var r2=document.querySelector('input[name="ex'+qi+'"]:checked');ok=!!r2&&(+r2.value===q.a);}
     else if(q.t==="multi"){var sel=[];document.querySelectorAll('input[name="ex'+qi+'"]:checked').forEach(function(c){sel.push(+c.value);});ok=sel.sort().join(",")===q.a.slice().sort().join(",");}
-    else if(q.t==="fill"){var v=document.getElementById("exfill"+qi).value.trim().toLowerCase().replace(/\s+/g,"");ok=!!v&&q.a.every(function(k){return v.indexOf(k.toLowerCase())>=0;});}
+    else if(q.t==="fill"){ok=fillCheck(q,"exfill"+qi+"_");}
     if(ok)score+=5;record(q,!!ok);
     var fb=document.getElementById("exfb"+qi);fb.className="feedback show "+(ok?"ok":"no");
     var ansTxt=q.t==="judge"?("正确判断："+(q.a?"正确":"错误")):q.t==="single"?("正确答案："+"ABCD"[q.a]):q.t==="multi"?("正确答案："+q.a.map(function(i){return "ABCD"[i];}).join("、")):("参考答案："+q.a.join(" · "));
@@ -1038,7 +1069,7 @@ function cycleQuestionHTML(q,answered,showExplain,phaseLabel){
   h+='<div class="qtext">'+esc(q.q)+'</div>';
   if(q.t==="judge"){h+='<div class="opts"><button class="opt" data-cv="1" '+(answered?"disabled":"")+'><span class="key">√</span>正确</button><button class="opt" data-cv="0" '+(answered?"disabled":"")+'><span class="key">×</span>错误</button></div>';}
   else if(q.t==="single"||q.t==="multi"){h+='<div class="opts">'+q.o.map(function(o,i){return '<button class="opt" data-cv="'+i+'" '+(answered?"disabled":"")+'><span class="key">'+"ABCD"[i]+'</span><span>'+esc(o)+'</span></button>';}).join("")+"</div>";if(q.t==="multi")h+='<p style="font-size:13px;color:var(--muted)">多选题：可多选，选好后点「提交」。</p>';}
-  else if(q.t==="fill"){h+='<input class="fillin" id="cycleFill" type="text" placeholder="把各空答案依次写出来，用空格隔开" autocomplete="off" '+(answered?"disabled":"")+'>';h+='<p style="font-size:13px;color:var(--muted)">填空题无提示 · 凭记忆填写</p>';}
+  else if(q.t==="fill"){h+=fillInputsHTML(q,"cycleFill",answered);}
   if(!answered&&(q.t==="multi"||q.t==="fill"))h+='<div class="qnav"><button class="btn amber" id="cycleSubmit">提交答案</button></div>';
   h+='<div class="feedback" id="cycleFb"></div><div id="cycleKpReveal"></div><div class="qnav" id="cycleNextWrap"></div></div>';
   return h;
@@ -1057,7 +1088,7 @@ function cycleWireQuestion(q,onDone){
   var sb=document.getElementById("cycleSubmit");
   if(sb)sb.addEventListener("click",function(){
     if(q.t==="multi"){if(!cycleSel.length)return;onDone(cycleSel.slice().sort().join(",")===q.a.slice().sort().join(","));}
-    else{var el=document.getElementById("cycleFill");var val=el?el.value.trim().toLowerCase().replace(/\s+/g,""):"";if(!val)return;onDone(q.a.every(function(k){return val.indexOf(String(k).toLowerCase())>=0;}));}
+    else{if(!fillAnyFilled(q,"cycleFill"))return;onDone(fillCheck(q,"cycleFill"));}
   });
 }
 function cycleShowFeedback(correct,explain,nextLabel,onNext){
@@ -1068,7 +1099,7 @@ function cycleShowFeedback(correct,explain,nextLabel,onNext){
   var nb=document.getElementById("cycleNextBtn");if(nb)nb.addEventListener("click",onNext);
   var box=document.getElementById("cycleBox");box.querySelectorAll(".opt").forEach(function(b){b.disabled=true;});
   var sb=document.getElementById("cycleSubmit");if(sb)sb.disabled=true;
-  var fi=document.getElementById("cycleFill");if(fi)fi.disabled=true;
+  var cbox=document.getElementById("cycleBox");if(cbox)cbox.querySelectorAll(".fillin").forEach(function(el){el.disabled=true;});
 }
 function cycleProgress(done,total,label){
   var pct=total?Math.round(done/total*100):0;
@@ -1107,12 +1138,6 @@ function startLearnCycle(){
 function cycleWrongQsForKp(kpNo){
   return cycleState.diagIds.map(function(id){return cycleQById(id);}).filter(function(q){return q&&q.kp===kpNo&&cycleState.diagAns[q.id]===false;});
 }
-function cycleAnchorList(k){
-  var src=(k[3]||k[4]||"").replace(/^【[^】]*】/,"").trim();
-  var parts=src.split(/[；。\n]/).map(function(s){return s.trim();}).filter(function(s){return s.length>1;});
-  if(parts.length<2)parts=src.split(/[、，]/).map(function(s){return s.trim();}).filter(function(s){return s;});
-  return parts.slice(0,8);
-}
 function renderCycleLearn(){
   var box=document.getElementById("cycleBox");
   var queue=cycleState.learnQueue,idx=cycleState.learnIdx;
@@ -1123,14 +1148,14 @@ function renderCycleLearn(){
   var head='<p style="font-size:13px;color:var(--muted);margin:0 0 6px">② 薄弱点速学 · 第 '+cycleState.loop+' 轮清扫 · 还剩 '+cycleState.weakKps.length+' 个薄弱点</p><div class="cycle-bar"><i style="width:'+Math.round(idx/queue.length*100)+'%"></i></div>';
   var wrongHtml="";
   if(wrongQs.length){wrongHtml='<div class="card" style="border-color:var(--red);margin-bottom:12px"><h3 style="font-size:15px">你刚才错在哪 · 第 '+kpNo+' 条</h3>'+wrongQs.map(function(q){return '<p style="font-size:14px;margin:8px 0 0"><b>'+esc(q.q)+'</b><br><span style="color:var(--muted)">'+esc(q.e)+'</span></p>';}).join("")+'</div>';}
+  var wrongStemOnly="";
+  if(wrongQs.length){wrongStemOnly='<div class="card" style="border-color:var(--red);margin-bottom:12px"><h3 style="font-size:15px">你刚才答错的题 · 第 '+kpNo+' 条（翻开后才看错在哪）</h3>'+wrongQs.map(function(q){return '<p style="font-size:14px;margin:8px 0 0"><b>'+esc(q.q)+'</b></p>';}).join("")+'</div>';}
   if(!cycleState.learnFlipped){
-    box.innerHTML=head+wrongHtml+'<div class="qcard flash" id="cycleFlash"><div class="qmeta" style="justify-content:center"><span class="tag red">薄弱点 · 第 '+kpNo+' 条</span><span class="tag">'+MODULES[k[1]]+'</span><span class="tag blue">第 1 步 · 先凭关键词猜</span></div><div class="big">'+esc(k[2])+'</div><p style="color:var(--muted);margin:10px 0 0">关键词：<span class="kw">'+esc(kwOf(k))+'…</span></p><p style="color:var(--muted);font-size:13px;margin:6px 0 0">先在心里说出：这条有几个要点？数字/成员分别是什么？清单题先报个数，再报成员。</p><p style="color:var(--muted);font-size:13px;margin-top:12px">想好了？点卡片翻开看锚点 ↓</p></div>';
+    box.innerHTML=head+wrongStemOnly+'<div class="qcard flash" id="cycleFlash"><div class="qmeta" style="justify-content:center"><span class="tag red">薄弱点 · 第 '+kpNo+' 条</span><span class="tag">'+MODULES[k[1]]+'</span><span class="tag blue">第 1 步 · 先回忆</span></div><div class="big">'+esc(k[2])+'</div><p style="color:var(--muted);font-size:13px;margin-top:14px">正面只有标题，不给关键词、不给提示。先在心里把要点完整说一遍，再点卡片翻开对照 ↓</p></div>';
     document.getElementById("cycleFlash").addEventListener("click",function(){cycleState.learnFlipped=true;saveProgress();renderCycleLearn();});
     return;
   }
-  var anchors=cycleAnchorList(k);
-  var anchorHtml=anchors.length?'<div class="card" style="margin:12px 0"><h3 style="font-size:15px">第 2 步 · 考试锚点（只认这些就能选对）</h3><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+anchors.map(function(a){return '<span class="tag" style="font-size:13px;padding:5px 10px">'+esc(a)+'</span>';}).join("")+'</div><p style="font-size:13px;color:var(--muted);margin:8px 0 0">'+(PRIO_SET[kpNo]?'这是清单题：先记总数（'+anchors.length+' 项左右，以原文为准），再整组认领——少一个、混进一个外人都不选。':PRIO_SLOW[kpNo]?'这是易混题：别只背这一条，重点记它和对子的方向区别（下一步复练会成对/换问法考你）。':'数字和限定词是锚点：看到选项先对数字、再对范围词（≥ / &lt; / 以上 / 以下）。')+'</p></div>':"";
-  box.innerHTML=head+wrongHtml+'<div class="qmeta"><span class="tag blue">第 2 步 · 看锚点</span><span class="tag blue">第 3 步 · 对照原文认干扰项</span></div>'+kpCard(k)+anchorHtml+'<div class="card"><h3 style="font-size:15px">认得怎么样？（按真实反应点，忘了会自动排到本轮后面再学一次）</h3><div class="rateRow"><button class="r-no" id="cyRateNo">忘了<small>本轮后面重学</small></button><button class="r-mid" id="cyRateMid">眼熟<small>先过 · 靠复练检验</small></button><button class="r-yes" id="cyRateYes">秒认<small>直接去复练验证</small></button></div></div>';
+  box.innerHTML=head+wrongHtml+'<div class="qmeta"><span class="tag blue">已翻开 · 对照原文</span></div>'+kpCard(k)+'<div class="card"><h3 style="font-size:15px">认得怎么样？（按真实反应点，忘了会自动排到本轮后面再学一次）</h3><div class="rateRow"><button class="r-no" id="cyRateNo">忘了<small>本轮后面重学</small></button><button class="r-mid" id="cyRateMid">眼熟<small>先过 · 靠复练检验</small></button><button class="r-yes" id="cyRateYes">秒认<small>直接去复练验证</small></button></div></div>';
   document.getElementById("cyRateNo").addEventListener("click",function(){fam[kpNo]=0;if(!cycleState.learnRequeued[kpNo]){cycleState.learnRequeued[kpNo]=1;cycleState.learnQueue.push(kpNo);}cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
   document.getElementById("cyRateMid").addEventListener("click",function(){if(fam[kpNo]<1)fam[kpNo]=1;cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
   document.getElementById("cyRateYes").addEventListener("click",function(){fam[kpNo]=2;cycleState.learnIdx++;cycleState.learnFlipped=false;refreshStats();saveProgress();renderCycle();});
@@ -1207,7 +1232,7 @@ function renderCycle(){
   if(cycleState.phase==="diag"){renderCycleDiag();return;}
   if(cycleState.phase==="diagDone"){
     var tot=cycleState.diagIds.length,strongN=tot-Object.keys(cycleState.diagAns).filter(function(k){return !cycleState.diagAns[k];}).length;
-    box.innerHTML='<div class="card"><h3>摸底完成 · 你的薄弱点出来了</h3><div class="cycle-score"><div>全量客观题<b>'+cycleState.diagCorrect+' / '+tot+'</b><span style="font-size:13px;color:var(--muted)">答对题数</span></div><div>薄弱知识点<b>'+cycleState.weakKps.length+' 个</b><span style="font-size:13px;color:var(--muted)">有错题的知识点</span></div><div>已掌握<b>'+strongN+' 题</b><span style="font-size:13px;color:var(--muted)">答对的不再重复学</span></div></div><p style="font-size:14px"><b>薄弱点清单：</b></p><div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+cycleState.weakKps.map(function(n){var k=kpByNo(n);return '<span class="tag red" style="font-size:13px;padding:5px 10px">第 '+n+' 条 · '+esc(k?k[2]:"")+'</span>';}).join("")+'</div><p style="font-size:13px;color:var(--muted)">接下来只学这 '+cycleState.weakKps.length+' 条：每条先凭关键词猜，再看锚点和你错在哪，最后认干扰项——为选择题识别而学，不默写。学完立刻只练这几条，错了再循环。</p><p style="margin-top:10px"><button class="btn amber" onclick="startLearnCycle()">开始学薄弱点（'+cycleState.weakKps.length+' 条）→</button></p></div>';return;
+    box.innerHTML='<div class="card"><h3>摸底完成 · 你的薄弱点出来了</h3><div class="cycle-score"><div>全量客观题<b>'+cycleState.diagCorrect+' / '+tot+'</b><span style="font-size:13px;color:var(--muted)">答对题数</span></div><div>薄弱知识点<b>'+cycleState.weakKps.length+' 个</b><span style="font-size:13px;color:var(--muted)">有错题的知识点</span></div><div>已掌握<b>'+strongN+' 题</b><span style="font-size:13px;color:var(--muted)">答对的不再重复学</span></div></div><p style="font-size:14px"><b>薄弱点清单：</b></p><div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+cycleState.weakKps.map(function(n){var k=kpByNo(n);return '<span class="tag red" style="font-size:13px;padding:5px 10px">第 '+n+' 条 · '+esc(k?k[2]:"")+'</span>';}).join("")+'</div><p style="font-size:13px;color:var(--muted)">接下来只学这 '+cycleState.weakKps.length+' 条：每条先只看标题回忆，翻开后对照原文和你错在哪——为选择题识别而学，不默写。学完立刻只练这几条，错了再循环。</p><p style="margin-top:10px"><button class="btn amber" onclick="startLearnCycle()">开始学薄弱点（'+cycleState.weakKps.length+' 条）→</button></p></div>';return;
   }
   if(cycleState.phase==="retestDone"){
     box.innerHTML='<div class="card"><h3>复练还没清零 · 还剩 '+cycleState.weakKps.length+' 个薄弱点</h3><div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">'+cycleState.weakKps.map(function(n){var k=kpByNo(n);return '<span class="tag red" style="font-size:13px;padding:5px 10px">第 '+n+' 条 · '+esc(k?k[2]:"")+'</span>';}).join("")+'</div><p style="font-size:14px;color:var(--muted)">不重学已答对的，只把剩下的再走一遍「学 → 练」，这是第 '+(cycleState.loop+1)+' 轮清扫。累了可以先关掉，进度存着，下次接着这一轮。</p><p style="margin-top:10px"><button class="btn amber" onclick="startLearnCycle()">再学剩下的 '+cycleState.weakKps.length+' 条 →</button> <button class="btn ghost" onclick="go(\'wrong\')">先看错题本</button></p></div>';return;
@@ -1272,6 +1297,40 @@ refreshStats();
     if(hint)hint.textContent="已清除";
     var sh=document.getElementById("saveHint");if(sh)sh.textContent="已开启本地保存";
   });
+})();
+/* ============ 简单访问计数 · 只记总访问量 ============
+   免注册免费计数服务（CountAPI 兼容接口 / Abacus），每次打开 +1 并显示总数。
+   服务不可用、超时或返回异常时保持隐藏，不影响任何学习功能。 */
+(function(){
+  var box=document.getElementById("visitCounter");
+  var num=document.getElementById("visitCount");
+  if(!box||!num||typeof fetch!=="function")return;
+  var url="https://abacus.jasoncameron.dev/hit/meanjey-traffic-safety-learning/visits-v1";
+  var done=false;
+  function show(v){
+    if(done)return;
+    if(typeof v!=="number"||!isFinite(v)||v<0)return;
+    done=true;
+    num.textContent=String(Math.floor(v));
+    box.hidden=false;
+  }
+  function hide(){ if(!done) box.hidden=true; }
+  try{
+    if(typeof AbortController!=="undefined"){
+      var ctrl=new AbortController();
+      var timer=setTimeout(function(){try{ctrl.abort();}catch(e){}},6000);
+      fetch(url,{signal:ctrl.signal,cache:"no-store"}).then(function(r){
+        clearTimeout(timer);
+        if(!r.ok)throw new Error("bad status");
+        return r.json();
+      }).then(function(d){ show(d&&(typeof d.value==="number"?d.value:d.count)); }).catch(function(){ clearTimeout(timer); hide(); });
+    }else{
+      fetch(url,{cache:"no-store"}).then(function(r){
+        if(!r.ok)throw new Error("bad status");
+        return r.json();
+      }).then(function(d){ show(d&&(typeof d.value==="number"?d.value:d.count)); }).catch(hide);
+    }
+  }catch(e){ hide(); }
 })();
 </script>
 </body>
